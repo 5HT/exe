@@ -71,22 +71,47 @@ in Lean model.
 \subsection{Intuitionistic Type Theory}
 
 \paragraph{}
-Type Theory of Per Martin-Löf (MLTT) is formulated in well known and common to all mathematicians style of Natural Deduction.
-In original MLTT postulates four types of judgment rules: for {\bf types}, {\bf terms} and {\bf definitional equalities} on both.
-Each form of type contains four groups of deduction rules:  {\bf formations}, {\bf introductions}, {\bf eliminators} and {\bf computational}
-that are understood in any valid contexts.
-Formation are correspond to typing rules, introductions (type constructors) and eliminators are adjunctions that correspond to axioms,
+Type theories are formal calculi that can be seen as both mathematical
+formal logics, set theories, programming languages and formalized
+programming logics used to prove program properties and derive a correct program from a specification \cite{nordstrom}.
+
+\paragraph{}
+The most modern type theory, the Theory of Homotopy Types (HoTT) \cite{pelayo} does not yet has a computational interpretation, finding
+such interpretation is an open problem and
+an area of active research \cite{sojakova}. So we chose one of the variants of the Type Theory of Per Martin Lof \cite{lof} to implement EXE.
+
+\paragraph{}
+We will follow the tradition in the literature on type systems \cite{henk1} and formulate our calculus with judgment rules in a well-known
+notation of Natural Deduction. There are four groups of judgement rules: for {\bf types}, {\bf terms} and {\bf definitional equalities} on both.
+Rules in each group can be in turn classified into
+{\bf formations}, {\bf introductions}, {\bf eliminators} and {\bf computational rules}.
+
+Formation rules are typing rules, introductions (type constructors) and eliminators are adjunctions that correspond to axioms,
 and computational rules correspond to operational semantics.
 From categorical point of view typing rules correspond to functors,
 axioms to morphisms and operational semantics to equalities on morphisms.
 
 \paragraph{}
-Original CoC pure type system was formualted on a limited number of universes, while in contemporary provers infinite
-number of universes is used. Usually all of them are predicative which mean that for any dependent terms,
-the resulting type complexity depends on complexity of both. Impredicative universe is used only for propositions.
-More than one impredicative universes causes to system inconsistency, while it still can be useful in programming.
-One can also build denotational semantics for predicative encodings that compiles to impredicative infinite hierarchy.
-We give here infinite predicative non-comulative hierarchy for top level language.
+Our variant of intuitionistic type system has an {\bf infinite} hierarchy of universes,
+the hierarchy is {\bf non-cumulative}, the universe of propositions is {\bf impredicative} while universes of values, types and higher types are {\bf predicative}. The next paragraphs briefly
+describe the reasons for such design choices.
+
+\paragraph{}
+While there are variants of MLTT with finite number of universes (see
+for example the lambda cube and PTS formulations of Calculus of
+Constructions in \cite{henk1}), most modern provers have an infinite
+hierarchy of universes as it's {\bf more expressive}.
+
+\paragraph{}
+The first universe, the universe of propositions, has impredicative quantification while all other universes are predicative. This setup
+is known to simplify the type system while keeping it free of
+paradoxes and thus {\bf sound as a formal logic}.
+
+\paragraph{}
+The first few universes have analogs in logic and axiomatic set theories.  Universe 0 can be thought of as the universe of propostions. Universe 1 contains elements.  Universe 1 contains sets. Universe 2 contains classes.  The hierarchy can be cumulative or non-cumulative. In cumulative
+setting lower universes are included in higher ones - e.g. all elements
+are sets. In non-cumulative setting the universes don't intersect,
+so the case is analogous to axiomatic set theories {\bf with urelements}.
 
 \subsection{Universes}
 
@@ -883,7 +908,10 @@ limits of identity functors on category of F-algebras.
 \bibitem{lof}        Per Martin-Löf \textit{Intuitionistic Type Theory} 1984
 \bibitem{curien1}    Pierre-Louis Curien \textit{Category theory: a programming language-oriented introduction}
 % \bibitem{awodey}     S.Awodey \textit{Category Theory} 2010
-% \bibitem{nordstrom} Nordstrom, Bengt and Petersson, Kent and Smith, Jan M. \textit{Programming in Martin-L\"{o}f's Type Theory: An Introduction}
+\bibitem{nordstrom} Nordstrom, Bengt and Petersson, Kent and Smith, Jan M. \textit{Programming in Martin-L\"{o}f's Type Theory: An Introduction}
+\bibitem{sojakova} Kristina Sojakova \textit{Higher Inductive Types as Homotopy-Initial Algebras} 2015
+\bibitem{alvaro} Alvaro Pelayo, Michael A. Warren \textit{Homotopy type theory} 2014
+
 
 % Inductive Types Section
 

@@ -205,5 +205,5 @@ mult : nat -> nat -> nat =
 -- exercise 1.8, part 2: define exponentiation using rec_nat
 exponent : nat -> nat -> nat =
   \(x:nat) (power:nat) ->
-     (rec_nat (nat->nat) (\(_:nat) -> one) (\(n:nat) (exponent_:nat->nat) (m:nat) -> mult m (exponent_ m)))
+     (rec_nat (nat->nat) (\(_:nat) -> one) (\(_:nat) (exponent_:nat->nat) (m:nat) -> mult m (exponent_ m)))
      power x

@@ -193,4 +193,7 @@ double : nat -> nat =
 add : nat -> (nat -> nat) =
   rec_nat (nat->nat) (\(x:nat)->x) (\(_:nat) (g:nat->nat) (m:nat) -> suc(g m))
 
-
+-- ind_N from HOTT book, section 1.9
+ind_nat (A:nat->U) (c_0:A zero) (c_s : (n:nat) -> A n -> A (suc n)) : (n:nat) -> A n = split
+  zero  -> c_0
+  suc n -> c_s n (ind_nat A c_0 c_s n)

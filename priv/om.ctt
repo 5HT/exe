@@ -8,16 +8,16 @@ import sigma
 data alg = z | o | max (a b: alg) | min (a b: alg) | app (a b: alg)
 name: U = list nat
 
-data pts
+data pts (A: U)
     = star (n: nat)
     | var (n: name) (n: nat)
-    | app (f a: pts)
-    | lambda (x: name) (d c: pts)
-    | arrow (d c: pts)
-    | pi (x: name) (d c: pts)
+    | app (f a: A)
+    | lambda (x: name) (d c: A)
+    | arrow (d c: A)
+    | pi (x: name) (d c: A)
 
 data mltt
-    = pts
+    = parent (p: pts mltt)
     | sigma (n: name) (a b: mltt)
     | pair (a b: mltt)
     | fst (p: mltt)

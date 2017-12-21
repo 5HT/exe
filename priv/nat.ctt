@@ -181,3 +181,16 @@ mutual
   evenPlusOddIsOdd : (n m:nat) (pn:evenT n) (pm : oddT m) -> oddT (add m n) = split
     zero   -> \(m : nat) (pn : evenT zero)  (pm : oddT m) -> pm
     suc n' -> \(m : nat) (pn : oddT n')     (pm : oddT m) -> oddPlusOddIsEven n' m pn pm
+
+-- rec_N from HOTT book, section 1.9
+rec_nat (A:U) (c_0 : A) (c_s : nat -> A -> A) : (n:nat) -> A = split
+  zero  -> c_0
+  suc n -> c_s n (rec_nat A c_0 c_s n)
+
+-- examples 1.9.1 and 1.9.2
+double : nat -> nat =
+  rec_nat nat zero (\(_:nat) (y:nat) -> suc (suc y))
+add : nat -> (nat -> nat) =
+  rec_nat (nat->nat) (\(x:nat)->x) (\(_:nat) (g:nat->nat) (m:nat) -> suc(g m))
+
+

@@ -136,3 +136,48 @@ equalNat : nat -> nat -> bool = split
 
 nat_instance : eq = (nat, equalNat)
 nat_instance_ : eq_ nat = equalNat
+
+-- Parity
+
+-- TODO: this overloads Unit from proto
+data tt = trivial
+data ff =
+
+mutual
+  evenT : nat -> U = split
+    zero -> tt
+    suc n -> oddT n
+
+  oddT : nat -> U = split
+    zero -> ff
+    suc n -> evenT n
+
+zeroIsEvenT : evenT zero = trivial
+
+evenSuccIsOddT (n: nat) (pn: evenT n): oddT (suc n) = pn
+oddSuccIsEvenT (n: nat) (pn: oddT n): evenT (suc n) = pn
+
+evenPredIsOddT: (n: nat) (pn: oddT (suc n)) -> evenT n = split
+  zero -> \(pn: oddT (suc zero)) -> pn
+  suc n' ->  \(pn: oddT (suc (suc n'))) -> pn
+
+-- TODO: this overloads efq and neg from prelude
+efq (A:U) : ff -> A = split {}
+neg (A:U) : U = A -> ff
+
+mutual
+  evenPlusEvenIsEven : (n m:nat) (pn:evenT n) (pm : evenT m) -> evenT (add m n) = split
+    zero   -> \(m : nat) (pn : evenT zero)    (pm : evenT m) -> pm
+    suc n' -> \(m : nat) (pn : oddT n')       (pm : evenT m) -> oddPlusEvenIsOdd n' m pn pm
+
+  oddPlusEvenIsOdd : (n m:nat) (pn:oddT n) (pm: evenT m) -> oddT (add m n) = split
+    zero   -> \(m : nat) (pn : oddT zero)  (pm : evenT m) -> efq (oddT m) pn
+    suc n' -> \(m : nat) (pn : evenT n')   (pm : evenT m) -> evenPlusEvenIsEven n' m pn pm
+
+  oddPlusOddIsEven : (n m:nat) (pn:oddT n) (pm : oddT m) -> evenT (add m n) = split
+    zero   -> \(m : nat) (pn : oddT zero)  (pm : oddT m) -> efq (evenT m) pn
+    suc n' -> \(m : nat) (pn : evenT n')   (pm : oddT m) -> evenPlusOddIsOdd n' m pn pm
+
+  evenPlusOddIsOdd : (n m:nat) (pn:evenT n) (pm : oddT m) -> oddT (add m n) = split
+    zero   -> \(m : nat) (pn : evenT zero)  (pm : oddT m) -> pm
+    suc n' -> \(m : nat) (pn : oddT n')     (pm : oddT m) -> oddPlusOddIsEven n' m pn pm

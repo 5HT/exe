@@ -201,3 +201,9 @@ ind_nat (A:nat->U) (c_0:A zero) (c_s : (n:nat) -> A n -> A (suc n)) : (n:nat) ->
 -- exercise 1.8, part 1: define multiplication using rec_nat
 mult : nat -> nat -> nat =
  rec_nat (nat->nat) (\(_:nat) -> zero) (\(_:nat) (mult_:nat->nat) (m:nat) -> add m (mult_ m))
+
+-- exercise 1.8, part 2: define exponentiation using rec_nat
+exponent : nat -> nat -> nat =
+  \(x:nat) (power:nat) ->
+     (rec_nat (nat->nat) (\(_:nat) -> one) (\(n:nat) (exponent_:nat->nat) (m:nat) -> mult m (exponent_ m)))
+     power x

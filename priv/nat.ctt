@@ -190,10 +190,14 @@ rec_nat (A:U) (c_0 : A) (c_s : nat -> A -> A) : (n:nat) -> A = split
 -- examples 1.9.1 and 1.9.2
 double : nat -> nat =
   rec_nat nat zero (\(_:nat) (y:nat) -> suc (suc y))
-add : nat -> (nat -> nat) =
-  rec_nat (nat->nat) (\(x:nat)->x) (\(_:nat) (g:nat->nat) (m:nat) -> suc(g m))
+add : nat -> nat -> nat =
+  rec_nat (nat->nat) (\(x:nat)->x) (\(_:nat) (add_:nat->nat) (m:nat) -> suc(add_ m))
 
 -- ind_N from HOTT book, section 1.9
 ind_nat (A:nat->U) (c_0:A zero) (c_s : (n:nat) -> A n -> A (suc n)) : (n:nat) -> A n = split
   zero  -> c_0
   suc n -> c_s n (ind_nat A c_0 c_s n)
+
+-- exercise 1.8, part 1: define multiplication using rec_nat
+mult : nat -> nat -> nat =
+ rec_nat (nat->nat) (\(_:nat) -> zero) (\(_:nat) (mult_:nat->nat) (m:nat) -> add m (mult_ m))

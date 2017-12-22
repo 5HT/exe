@@ -113,7 +113,7 @@ caseDNat (P:nat -> U) (a0 :P zero) (aS : (n:nat) -> P (suc n))
  suc n -> aS n
 
 znots (n : nat) : neg (Path nat zero (suc n)) =
- \ (h:Path nat zero (suc n)) -> subst nat (caseNat U nat N0) zero (suc n) h zero
+ \ (h:Path nat zero (suc n)) -> subst nat (caseNat U nat Empty) zero (suc n) h zero
 
 snotz (n : nat) : neg (Path nat (suc n) zero) =
  \ (h:Path nat (suc n) zero) -> znots n (inv nat (suc n) zero h)
@@ -136,3 +136,72 @@ equalNat : nat -> nat -> bool = split
 
 nat_instance : eq = (nat, equalNat)
 nat_instance_ : eq_ nat = equalNat
+
+-- Parity
+
+-- TODO: this overloads Unit from proto
+
+mutual
+  evenT : nat -> U = split
+    zero -> Unit
+    suc n -> oddT n
+
+  oddT : nat -> U = split
+    zero -> Empty
+    suc n -> evenT n
+
+zeroIsEvenT : evenT zero = tt
+
+evenSuccIsOddT (n: nat) (pn: evenT n): oddT (suc n) = pn
+oddSuccIsEvenT (n: nat) (pn: oddT n): evenT (suc n) = pn
+
+evenPredIsOddT: (n: nat) (pn: oddT (suc n)) -> evenT n = split
+  zero -> \(pn: oddT (suc zero)) -> pn
+  suc n' ->  \(pn: oddT (suc (suc n'))) -> pn
+
+-- TODO: this overloads efq and neg from prelude
+efq (A:U) : Empty -> A = split {}
+neg (A:U) : U = A -> Empty
+
+mutual
+  evenPlusEvenIsEven : (n m:nat) (pn:evenT n) (pm : evenT m) -> evenT (add m n) = split
+    zero   -> \(m : nat) (pn : evenT zero)    (pm : evenT m) -> pm
+    suc n' -> \(m : nat) (pn : oddT n')       (pm : evenT m) -> oddPlusEvenIsOdd n' m pn pm
+
+  oddPlusEvenIsOdd : (n m:nat) (pn:oddT n) (pm: evenT m) -> oddT (add m n) = split
+    zero   -> \(m : nat) (pn : oddT zero)  (pm : evenT m) -> efq (oddT m) pn
+    suc n' -> \(m : nat) (pn : evenT n')   (pm : evenT m) -> evenPlusEvenIsEven n' m pn pm
+
+  oddPlusOddIsEven : (n m:nat) (pn:oddT n) (pm : oddT m) -> evenT (add m n) = split
+    zero   -> \(m : nat) (pn : oddT zero)  (pm : oddT m) -> efq (evenT m) pn
+    suc n' -> \(m : nat) (pn : evenT n')   (pm : oddT m) -> evenPlusOddIsOdd n' m pn pm
+
+  evenPlusOddIsOdd : (n m:nat) (pn:evenT n) (pm : oddT m) -> oddT (add m n) = split
+    zero   -> \(m : nat) (pn : evenT zero)  (pm : oddT m) -> pm
+    suc n' -> \(m : nat) (pn : oddT n')     (pm : oddT m) -> oddPlusOddIsEven n' m pn pm
+
+-- rec_N from HOTT book, section 1.9
+rec_nat (A:U) (c_0 : A) (c_s : nat -> A -> A) : (n:nat) -> A = split
+  zero  -> c_0
+  suc n -> c_s n (rec_nat A c_0 c_s n)
+
+-- examples 1.9.1 and 1.9.2
+double : nat -> nat =
+  rec_nat nat zero (\(_:nat) (y:nat) -> suc (suc y))
+add : nat -> nat -> nat =
+  rec_nat (nat->nat) (\(x:nat)->x) (\(_:nat) (add_:nat->nat) (m:nat) -> suc(add_ m))
+
+-- ind_N from HOTT book, section 1.9
+ind_nat (A:nat->U) (c_0:A zero) (c_s : (n:nat) -> A n -> A (suc n)) : (n:nat) -> A n = split
+  zero  -> c_0
+  suc n -> c_s n (ind_nat A c_0 c_s n)
+
+-- exercise 1.8, part 1: define multiplication using rec_nat
+mult : nat -> nat -> nat =
+ rec_nat (nat->nat) (\(_:nat) -> zero) (\(_:nat) (mult_:nat->nat) (m:nat) -> add m (mult_ m))
+
+-- exercise 1.8, part 2: define exponentiation using rec_nat
+exponent : nat -> nat -> nat =
+  \(x:nat) (power:nat) ->
+     (rec_nat (nat->nat) (\(_:nat) -> one) (\(_:nat) (exponent_:nat->nat) (m:nat) -> mult m (exponent_ m)))
+     power x

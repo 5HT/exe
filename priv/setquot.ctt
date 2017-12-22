@@ -471,21 +471,21 @@ test' : (P' true').1 = K' true'
 
 -- Another test:
 
-true'neqfalse' (H : Path bool' true' false') : N0 = falseNeqTrue rem1
+true'neqfalse' (H : Path bool' true' false') : Empty = falseNeqTrue rem1
   where
   rem : Path U (Path bool true true) (Path bool false true) = <i> ((H @ i).1 true).1
   rem1 : Path bool false true = comp rem (<_> true) []
 
-test1 (x : bool') (H1 : Path bool' x true') (H2 : Path bool' x false') : N0 = true'neqfalse' rem
+test1 (x : bool') (H1 : Path bool' x true') (H2 : Path bool' x false') : Empty = true'neqfalse' rem
   where
   rem : Path bool' true' false' = <i> comp (<_> bool') x [(i = 0) -> H1, (i = 1) -> H2]
 
 test2 (x : bool') (p1 : (ishinh (Path bool' x true')).1)
-                  (p2 : (ishinh (Path bool' x false')).1) : N0 =
-  hinhuniv (Path bool' x true') (N0,propN0) rem p1
+                  (p2 : (ishinh (Path bool' x false')).1) : Empty =
+  hinhuniv (Path bool' x true') (Empty,propN0) rem p1
   where
-  rem (H1 : Path bool' x true') : N0 =
-    hinhuniv (Path bool' x false') (N0,propN0)
+  rem (H1 : Path bool' x true') : Empty =
+    hinhuniv (Path bool' x false') (Empty,propN0)
              (\(H2 : Path bool' x false') -> test1 x H1 H2) p2
 
 -- shorthand for this big type

@@ -169,10 +169,10 @@ isContrProp (A : U) (h : isContr A) : prop A =
 
 -- Basic data types
 
-data N0 =
+data Empty =
 
-efq (A : U) : N0 -> A = split {}
-neg (A : U) : U = A -> N0
+efq (A : U) : Empty -> A = split {}
+neg (A : U) : U = A -> Empty
 
 setUnit : set Unit = propSet Unit propUnit
 
@@ -193,7 +193,7 @@ const (A : U) (f : A -> A) : U = (x y : A) -> Path A (f x) (f y)
 
 exConst (A : U) : U = (f:A -> A) * const A f
 
-propN0 : prop N0 = \ (x y:N0) -> efq (Path N0 x y) x
+propN0 : prop Empty = \ (x y: Empty) -> efq (Path Empty x y) x
 
 propNeg (A:U) : prop (neg A) = \ (f g:neg A) -> <i>\(x:A) -> (propN0 (f x) (g x))@i
 

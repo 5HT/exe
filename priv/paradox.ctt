@@ -2,7 +2,7 @@ module paradox where
 
 import prelude
 
-ff : N0 = ff
+ff : Empty = ff
 
 proveAnything (A: U): A = efq A ff
 

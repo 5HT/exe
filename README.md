@@ -89,7 +89,8 @@ This library is best to read with HoTT book at http://groupoid.space/mltt/types/
 Credits
 -------
 
-* Andy Melnikov
 * Maxim Sokhatsky
-
-
+* Eugene Smolanka
+* Andy Melnikov
+* Denis Stoyanov
+* Dmitry Astapov

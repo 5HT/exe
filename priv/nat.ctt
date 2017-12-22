@@ -205,3 +205,13 @@ exponent : nat -> nat -> nat =
   \(x:nat) (power:nat) ->
      (rec_nat (nat->nat) (\(_:nat) -> one) (\(_:nat) (exponent_:nat->nat) (m:nat) -> mult m (exponent_ m)))
      power x
+
+-- exercise 1.9: Define the type family Fin : N → U mentioned at the end of §1.3, and the dependent
+-- function fmax : ∏(n:N) Fin(n + 1) mentioned in §1.4.
+data Fin (n: nat)
+    = fzero
+    | fsuc (n: nat) (i: Fin (pred n))
+
+fmax : (n:nat) -> Fin (suc n) = split
+  zero -> fsuc one fzero
+  suc n -> fsuc (suc (suc n)) (fmax n)

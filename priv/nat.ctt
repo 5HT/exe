@@ -215,3 +215,15 @@ data Fin (n: nat)
 fmax : (n:nat) -> Fin (suc n) = split
   zero -> fsuc one fzero
   suc n -> fsuc (suc (suc n)) (fmax n)
+
+-- exercise 1.10: Show that the Ackermann function ack : N → N → N is definable using only rec_nat
+-- satisfying the following equations:
+--   ack(0, n) ≡ succ(n),
+--   ack(succ(m), 0) ≡ ack(m, 1),
+--   ack(succ(m),succ(n)) ≡ ack(m, ack(succ(m), n)).
+ack : nat -> nat -> nat =
+  rec_nat (nat->nat)
+          (\(n:nat) -> suc n)
+          (\(m:nat) (_:nat->nat) (n:nat) ->
+            rec_nat nat (ack m one) (\(n':nat) (_:nat) -> ack m (ack (suc m) n')) n
+          )

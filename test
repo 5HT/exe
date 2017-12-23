@@ -10,11 +10,13 @@ files="binnat function
        univalence category grothendieck"
 
 rm parsed.txt
-for file in $files
-do
- grep "^import $file$" priv/*.ctt
- cubical -b priv/$file.ctt | tee >(grep Parsed | sed 's|Parsed "priv/||;s|" successfully!||' >>parsed.txt) | grep -vE "0m0|^ *Checking:|^Parsed|File loaded.|^$|cubical, version|shadowed"
-done
+function compile() {
+    file="$1"
+    grep "^import $file$" priv/*.ctt
+    cubical -b priv/$file.ctt 
+}
+export -f compile
+parallel compile ::: $files | tee >(grep Parsed | sed 's|Parsed "priv/||;s|" successfully!||' >>parsed.txt) | grep -vE "0m0|^ *Checking:|^Parsed|File loaded.|^$|cubical, version|shadowed"
 
 echo Compiled $(sort -u parsed.txt | wc -l) files of $(ls -1 priv/*.ctt | wc -l) in priv/
 echo Skipped files:

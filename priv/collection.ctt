@@ -1,7 +1,6 @@
 -- This file proves that the collection of all sets is a groupoid
 module collection where
 
-import univ
 import sigma_prev
 import pi_prev
 

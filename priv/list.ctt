@@ -1,11 +1,8 @@
 module list where
 
 import nat
-import prelude
 import control
 import maybe
-import bool
-import eq
 
 data list (A: U) = nil
                  | cons (a: A) (as: list A)

@@ -1,9 +1,6 @@
 module om where
 
-import nat
 import list
-import maybe
-import sigma
 
 data alg = z | o | max (a b: alg) | min (a b: alg) | app (a b: alg)
 name: U = list nat

@@ -1,6 +1,5 @@
 module nat where
 
-import bool
 import eq
 
 data nat = zero | suc (n : nat)

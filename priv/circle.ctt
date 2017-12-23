@@ -1,7 +1,6 @@
 -- The circle as a HIT.
 module circle where
 
-import bool
 import int
 
 data S1 = base

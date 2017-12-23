@@ -1,11 +1,8 @@
 -- This file contains the definitions of some standard algebraic structures
 -- and homomorphisms, as well as some related identities.
 module algstruct where
-import bool
-import prelude
 import pi_prev
 import iso_sigma
-import sigma
 
 -- Properties
 --------------------------------------------------------------------------------

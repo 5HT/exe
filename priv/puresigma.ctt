@@ -1,5 +1,4 @@
 module puresigma where
-import nat
 import list
 
 P: nat -> U = (\(_:nat) -> list nat)

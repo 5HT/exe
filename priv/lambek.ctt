@@ -1,6 +1,5 @@
 module lambek where
 
-import functor
 import control
 import either
 import nat

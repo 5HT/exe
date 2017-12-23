@@ -1,7 +1,6 @@
 -- Formalization of (impredicative) set quotients
 module setquot where
 
-import bool
 import sigma_prev
 import pi_prev
 

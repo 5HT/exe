@@ -2,7 +2,6 @@
 module helix where
 
 import circle
-import equiv
 import pi
 
 oneTurn (l: loopS1) : loopS1 = compS1 l loop1

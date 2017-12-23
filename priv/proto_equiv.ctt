@@ -1,4 +1,5 @@
 module proto_equiv where
+import propset
 
 fiber   (A B: U) (f: A -> B) (y: B): U = (x: A) * Path B y (f x)
 isEquiv (A B: U) (f: A -> B): U = (y: B) -> isContr (fiber A B f y)

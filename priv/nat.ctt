@@ -243,6 +243,18 @@ double_n_is_add_n_n : (n:nat) -> Path nat (double n) (add n n) = split
                 (suc (add (suc x) x))
              (<j> (suc (suc (double_n_is_add_n_n x @ j)))) 
              (<k> suc (add_suc x x @ -k))
-           -- Same result, but more cryptic
-           -- comp (<i> Path nat (suc (suc (double x))) (suc (add_suc x x @ -i)))
-           --      (<j> (suc (suc (double_n_is_add_n_n x @ j)))) []
+
+-- Same result, but with cryptic comp application obtained by expanding composition
+-- Note the empty third argument to comp
+double_n_is_add_n_n_via_cryptic_comp : (n:nat) -> Path nat (double n) (add n n) = split
+  zero -> <i> zero
+  suc x -> comp (<i> Path nat (suc (suc (double x))) (suc (add_suc x x @ -i)))
+                (<j> (suc (suc (double_n_is_add_n_n x @ j)))) []
+
+-- Same result, but with more typical comp application
+double_n_is_add_n_n_via_comp : (n:nat) -> Path nat (double n) (add n n) = split
+  zero -> <i> zero
+  suc x -> <i> comp (<_> nat) (suc (suc (double_n_is_add_n_n x @ i)))
+                [ (i=0) -> <j> (suc (suc (double x)))   -- 2+(double x) => 2+(add x x)
+                , (i=1) -> <j> (suc (add_suc x x @ -j)) -- 2+(add x x)  => 1+(add (x+1) x)
+                ]

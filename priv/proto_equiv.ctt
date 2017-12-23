@@ -1,4 +1,5 @@
 module proto_equiv where
+import propset
 
 import propset
 

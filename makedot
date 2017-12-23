@@ -2,6 +2,7 @@
 set -e -o pipefail
 pushd priv >/dev/null
 echo 'digraph G {'
+cat ../distinct.txt | sed 's|^\(.*\).ctt|\1[URL="http://groupoid.space/mltt/types/#\1"]|g'
 grep "^import" $(cat ../distinct.txt) | sed 's|.ctt:import | -> |g'
 echo '}'
 popd >/dev/null

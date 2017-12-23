@@ -1,0 +1,10 @@
+#!/bin/bash
+
+current=$(mktemp)
+reduced=$(mktemp)
+trap "rm $current $reduced" EXIT
+
+(cd priv; ls -1 *.ctt) > distinct.txt 
+./makedot > $current
+./makedot | tred >$reduced
+diff -uw <(sort $current) <(sort $reduced|sed -e's/;//')

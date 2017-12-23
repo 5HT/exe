@@ -1,5 +1,32 @@
 #!/bin/bash
-file=$1
+dir=$(dirname "$0")
+module="$1"
+file="${dir}/priv/${module}.ctt"
+[ -z "${module}" -o ! -f "$file" ] && {
+    echo "USAGE: $0 MODULE";
+    exit 1;
+}
+
+definitions=$(mktemp)
+trap "rm $definitions" EXIT
+
+# definitions are all words that begin at the start of the line except module,import,data
+awk -vMODULE="${module}" \
+    '$0~/^[[:alnum:]]+/ && $1!~/module|import|data/ && $1!=MODULE {print $1}' ${file} \
+    > ${definitions}
+
 echo 'digraph Deps {'
-grep -Ff <(grep "^[[:alnum:]]+" -Eo priv/$1.ctt | grep -Evx "module|import|data") -o $(ls -1 priv/*.ctt | grep -v $file | xargs) | sort -u | sed 's|^priv/||;s|\.ctt||;s|:| -> |;'
+
+grep -o -Ff $definitions $(ls -1 ${dir}/priv/*.ctt ) | sort -u \
+    | (IFS=":"
+       while read file dep ; do
+           # If definition is mentioned in a file, it might be defined in the same file
+           # (and therefore shadowed), awk invocation checks for this
+           module=$(basename ${file})
+           module=${module%%.ctt}
+           awk -vMODULE=${module} -vDEP=${dep} \
+            'BEGIN{shadowed=0}
+             match($0,DEP)==1 {shadowed=1}
+             match($0,DEP)>1 && !shadowed { print MODULE, "->", DEP; exit }' ${file}
+       done)
 echo '}'

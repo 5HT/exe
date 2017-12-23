@@ -186,9 +186,9 @@ rec_nat (A:U) (c_0 : A) (c_s : nat -> A -> A) : (n:nat) -> A = split
   suc n -> c_s n (rec_nat A c_0 c_s n)
 
 -- examples 1.9.1 and 1.9.2
-double : nat -> nat =
+double_via_rec_nat : nat -> nat =
   rec_nat nat zero (\(_:nat) (y:nat) -> suc (suc y))
-add : nat -> nat -> nat =
+add_via_rec_nat : nat -> nat -> nat =
   rec_nat (nat->nat) (\(x:nat)->x) (\(_:nat) (add_:nat->nat) (m:nat) -> suc(add_ m))
 
 -- ind_N from HOTT book, section 1.9
@@ -227,3 +227,22 @@ ack : nat -> nat -> nat =
           (\(m:nat) (_:nat->nat) (n:nat) ->
             rec_nat nat (ack m one) (\(n':nat) (_:nat) -> ack m (ack (suc m) n')) n
           )
+
+
+-- As a lead-in to exercice 1.8, part three (prove that nat is a semi-ring)
+-- lets prove that double x = add x x
+double : nat -> nat = split
+  zero -> zero
+  suc n -> suc (suc (double n))
+
+double_n_is_add_n_n : (n:nat) -> Path nat (double n) (add n n) = split
+  zero -> <i> zero
+  suc x -> composition nat
+                (suc (suc (double x)))
+                (suc (suc (add x x)))
+                (suc (add (suc x) x))
+             (<j> (suc (suc (double_n_is_add_n_n x @ j)))) 
+             (<k> suc (add_suc x x @ -k))
+           -- Same result, but more cryptic
+           -- comp (<i> Path nat (suc (suc (double x))) (suc (add_suc x x @ -i)))
+           --      (<j> (suc (suc (double_n_is_add_n_n x @ j)))) []

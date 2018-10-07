@@ -6,8 +6,8 @@ module mltt where
 
 -- Pi built-in type (axioms)
 Pi (A: U) (B: A -> U): U = (x: A) -> B x
-lambda (A: U) (B: A -> U) (a: A) (b: B a): A -> B a = \(x: A) -> b
-app (A: U) (B: A -> U) (a: A) (f: A -> B a): B a = f a
+lambda (A: U) (B: A -> U) (b: (a: A) -> B a): Pi A B = \(x: A) -> b x
+app (A: U) (B: A -> U) (a: A) (f: Pi A B): B a = f a
 
 -- Sigma built-in type (optional)
 Sigma (A: U) (B: A -> U): U = (x: A) * B x
@@ -48,11 +48,11 @@ J         (A: U) (x: A) (C: D A) (d: C x x (reflect A x))
 trans_comp (A:U)(a:A): Path A a (trans A A (<i> A) a) = fill (<i> A) a []
 subst_comp (A:U)(P:A->U)(a:A)(e:P(a)): Path (P a) e (subst A P a a (reflect A a) e) = trans_comp (P a) e
 
-comp1 (A:U)(B:A->U)(a:A)(f:A->B a): Equ (B a) (app A B a (lambda A B a (f a))) (f a) = reflect (B a) (f a)   -- beta
-comp2 (A:U)(B:A->U)(a:A)(f:A->B a): Equ (A -> B a) f (\(x:A) -> f x)                 = reflect (A -> B a)  f -- eta
-comp3 (A:U)(B:A->U)(a:A)(b: B a): Equ A a (pr1 A B (a,b))                            = reflect A           a -- 1
-comp4 (A:U)(B:A->U)(a:A)(b: B a): Equ (B a) b (pr2 A B (a,b))                        = reflect (B a)       b -- 2
-comp5 (A:U)(B:A->U)(p: Sigma A B): Equ (Sigma A B) p (pr1 A B p,pr2 A B p)           = reflect (Sigma A B) p -- 3
+comp1 (A:U)(B:A->U)(a : A)(f: Pi A B): Equ (B a) (app A B a (lambda A B f)) (f a) = reflect (B a) (f a)   -- beta
+comp2 (A:U)(B:A->U)(a:A)(f: Pi A B): Equ (Pi A B) f (\(x:A) -> f x)               = reflect (Pi A B)  f   -- eta
+comp3 (A:U)(B:A->U)(a:A)(b: B a): Equ A a (pr1 A B (a,b))                         = reflect A           a -- 1
+comp4 (A:U)(B:A->U)(a:A)(b: B a): Equ (B a) b (pr2 A B (a,b))                     = reflect (B a)       b -- 2
+comp5 (A:U)(B:A->U)(p: Sigma A B): Equ (Sigma A B) p (pr1 A B p,pr2 A B p)        = reflect (Sigma A B) p -- 3
 comp6 (A:U)(a:A)(C: D A) (d: C a a (reflect A a))
     : Path (C a a (reflect A a)) d (J A a C d a (reflect A a))
     = subst_comp (singl A a) T (eta A a) d where T (z: singl A a) : U = C a (z.1) (z.2)
@@ -60,12 +60,12 @@ comp6 (A:U)(a:A)(C: D A) (d: C a a (reflect A a))
 -- 3a) MLTT Model
 MLTT (A: U): U
   = (Pi_Former: (A -> U) -> U)
-  * (Pi_Intro: (B: A -> U) (a: A) -> B a -> (A -> B a))
-  * (Pi_Elim: (B: A -> U) (a: A) -> (A -> B a) -> B a)
-  * (Pi_Comp1: (B: A -> U) (a: A) (f: A -> B a) ->
-    Equ (B a) (Pi_Elim B a (Pi_Intro B a (f a))) (f a))
-  * (Pi_Comp2: (B: A -> U) (a: A) (f: A -> B a) ->
-    Equ (A -> B a) f (\(x:A) -> f x))
+  * (Pi_Intro: (B: A -> U) -> ((a: A) -> B a) -> (Pi A B))
+  * (Pi_Elim: (B: A -> U) (a: A) -> (Pi A B) -> B a)
+  * (Pi_Comp1: (B: A -> U) (a : A) (f: Pi A B) ->
+    Equ (B a) (Pi_Elim B a (Pi_Intro B f)) (f a))
+  * (Pi_Comp2: (B: A -> U) (a: A) (f: Pi A B) ->
+    Equ (Pi A B) f (\(x:A) -> f x))
   * (Sigma_Former: (A -> U) -> U)
   * (Sigma_Intro: (B: A -> U) (a: A) -> (b: B a) -> Sigma A B)
   * (Sigma_Elim1: (B: A -> U) (_: Sigma A B) -> A)
@@ -88,4 +88,5 @@ instance (A: U): MLTT A
     = (Pi A, lambda A, app A, comp1 A, comp2 A,
        Sigma A, pair A, pr1 A, pr2 A, comp3 A, comp4 A, comp5 A,
        Equ A, reflect A, J A, comp6 A, A)
+
 

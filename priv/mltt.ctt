@@ -1,0 +1,70 @@
+module mltt where
+
+Pi (A: U) (B: A -> U): U = (x: A) -> B x
+lambda (A: U) (B: A -> U) (b: Pi A B): Pi A B = \(x: A) -> b x
+app    (A: U) (B: A -> U) (f: Pi A B) (a: A): B a = f a
+
+Sigma (A: U) (B: A -> U): U = (x: A) * B x
+pair (A: U) (B: A -> U) (a: A) (b: B a): Sigma A B = (a,b)
+pr1 (A: U) (B: A -> U) (x: Sigma A B): A = x.1
+pr2 (A: U) (B: A -> U) (x: Sigma A B): B (pr1 A B x) = x.2
+
+W (A:U) (B: A -> U): U  = (x:A) * ( B(x) -> W A B )
+Wrec (A:U) (B:A -> U) (P:U) (alg: (a:A) -> (B(a) -> W A B) -> ((b:B(a)) -> P) -> P) : (w: W A B) -> P = \(w:W A B) -> alg w.1 w.2 (\(b:B(w.1)) -> Wrec A B P alg (w.2 b))
+Wind (A:U) (B:A -> U) (P:W A B -> U) (alg: (a:A) (f:B(a) -> W A B) -> ((b:B(a)) -> P (f b)) -> P (a,f)) : (w: W A B) -> P w = \(w:W A B) -> alg w.1 w.2 (\(b:B(w.1)) -> Wind A B P alg (w.2 b))
+Path (A: U) (a b: A): U = PathP (<i>A) a b
+
+HeteroEqu (A B: U) (a: A) (b: B) (P: Path U A B): U = PathP P a b
+Equ       (A: U) (x y: A): U = HeteroEqu A A x y (<i>A)
+
+reflect   (A: U) (a: A): Equ A a a = <i> a
+D         (A: U) : U = (x y: A) -> Equ A x y -> U
+singl     (A: U) (a: A): U = (x: A) * Equ A a x
+eta       (A: U) (a: A): singl A a = (a,reflect A a)
+contr     (A: U) (a b: A) (p: Equ A a b): Equ (singl A a) (eta A a) (b,p) = <i> (p @ i, <j> p @ i /\ j)
+subst     (A: U) (P: A -> U) (a b: A) (p: Equ A a b) (e: P a): P b = transport (ap A U P a b p) e
+trans   (A B: U) (p: Path U A B) (a : A): B = comp p a []
+ap      (A B: U) (f: A -> B) (a b: A) (p: Equ A a b): Equ B (f a) (f b) = <i> f (p @ i)
+
+J         (A: U) (x: A) (C: D A) (d: C x x (reflect A x))
+          (y: A) (p: Equ A x y): C x y p = subst (singl A x) T (eta A x) (y, p)
+                                                 (contr A x y p) d where
+                     T (z: singl A x): U = C x (z.1) (z.2)
+
+trans_comp (A:U)(a: A): Path A a (trans A A (<i> A) a) = fill (<i> A) a []
+subst_comp (A:U)(P:A -> U)(a:A)(e:P(a)): Path (P a) e (subst A P a a (reflect A a) e) = trans_comp (P a) e
+
+comp1 (A:U)(B:A -> U)(a:A)(f: Pi A B): Equ (B a) (app A B (lambda A B f) a) (f a) = reflect (B a) (f a)
+comp2 (A:U)(B:A -> U)(a:A)(f: Pi A B): Equ (Pi A B) f (\(x:A) -> f x)               = reflect (Pi A B)  f
+comp3 (A:U)(B:A -> U)(a:A)(b: B a): Equ A a (pr1 A B (a,b))                         = reflect A           a
+comp4 (A:U)(B:A -> U)(a:A)(b: B a): Equ (B a) b (pr2 A B (a,b))                     = reflect (B a)       b
+comp5 (A:U)(B:A -> U)(p: Sigma A B): Equ (Sigma A B) p (pr1 A B p,pr2 A B p)        = reflect (Sigma A B) p
+comp6 (A:U)(a:A)(C: D A) (d: C a a (reflect A a))
+    : Path (C a a (reflect A a)) d (J A a C d a (reflect A a))
+    = subst_comp (singl A a) T (eta A a) d where T (z: singl A a) : U = C a (z.1) (z.2)
+
+MLTT (A: U): U
+  = (Pi_Former:   (A -> U) -> U)
+  * (Pi_Intro: (B: A -> U) -> Pi A B -> Pi A B)
+  * (Pi_Elim:  (B: A -> U) -> Pi A B -> Pi A B)
+  * (Pi_Comp1: (B: A -> U) (a: A) (f: Pi A B) -> Equ (B a) (Pi_Elim B (Pi_Intro B f) a) (f a))
+  * (Pi_Comp2: (B: A -> U) (a: A) (f: Pi A B) -> Equ (Pi A B) f (\(x:A) -> f x))
+  * (Sigma_Former: (A -> U) -> U)
+  * (Sigma_Intro: (B: A -> U) (a: A) -> (b: B a) -> Sigma A B)
+  * (Sigma_Elim1: (B: A -> U) (_: Sigma A B) -> A)
+  * (Sigma_Elim2: (B: A -> U) (x: Sigma A B) -> B (pr1 A B x))
+  * (Sigma_Comp1: (B: A -> U) (a: A) (b: B a) -> Equ A a (Sigma_Elim1 B (Sigma_Intro B a b)))
+  * (Sigma_Comp2:  (B: A -> U) (a: A) (b: B a) -> Equ (B a) b (Sigma_Elim2 B (a,b)))
+  * (Sigma_Comp3: (B: A -> U) (p: Sigma A B) -> Equ (Sigma A B) p (pr1 A B p,pr2 A B p))
+  * (Id_Former: A -> A -> U)
+  * (Id_Intro: (a: A) -> Equ A a a)
+  * (Id_Elim: (x: A) (C: D A) (d: C x x (Id_Intro x)) (y: A) (p: Equ A x y) -> C x y p)
+  * (Id_Comp: (a:A)(C: D A) (d: C a a (Id_Intro a)) ->
+      Path (C a a (Id_Intro a)) d (Id_Elim a C d a (Id_Intro a))) * U
+
+instance (A: U): MLTT A
+    = (Pi A, lambda A, app A, comp1 A, comp2 A,
+       Sigma A, pair A, pr1 A, pr2 A, comp3 A, comp4 A, comp5 A,
+       Equ A, reflect A, J A, comp6 A, A)
+
+

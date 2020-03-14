@@ -1,0 +1,7 @@
+{application, cub, [
+   {description, "CTT-CCHM Groupoid Infinity"},
+   {vsn, "1.0"},
+   {registered, []},
+   {applications, [kernel, stdlib, parsetools]},
+   {mod, { cub, []}},
+   {env, []} ]}.

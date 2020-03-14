@@ -1,0 +1,124 @@
+# Syntax rules for the EXE certificate language
+
+context default
+
+    keyword whole \[\-\.0123456789(\)]%  brightred
+    keyword whole unknown brightred
+
+    keyword [ lightgray
+    keyword || lightgray
+    keyword | lightgray
+    keyword ] lightgray
+    keyword ( lightgray
+    keyword ) lightgray
+    keyword { lightgray
+    keyword } lightgray
+    keyword - lightgray
+    keyword > lightgray
+    keyword < lightgray
+    keyword : gray
+    keyword = gray
+
+
+# Inductive Constructions
+    keyword whole coe brown
+    keyword whole func brown
+    keyword whole record brown
+    keyword whole class brown
+    keyword whole new brown
+    keyword whole elim brown
+    keyword whole mutual brown
+    keyword whole data brown
+    keyword whole hdata brown
+    keyword whole transport brown
+    keyword whole fill brown
+    keyword whole comp brown
+    keyword whole Glue brown
+    keyword whole glue brown
+    keyword whole unglue brown
+    keyword whole split brown
+    keyword whole import brown
+    keyword whole module brown
+    keyword whole where brown
+    keyword whole let brown
+    keyword whole undefined brown
+    keyword whole case brown
+    keyword whole receive brown
+    keyword whole execute brown
+    keyword whole process brown
+    keyword whole spawn brown
+    keyword whole send brown
+    keyword whole in brown
+    keyword whole U brown
+    keyword whole Type brown
+
+# Regular Inductive Types from Base Library
+
+    keyword whole nat    cyan
+    keyword whole cons   cyan
+    keyword whole nil    cyan
+    keyword whole zero   cyan
+    keyword whole succ   cyan
+    keyword whole false   cyan
+    keyword whole true   cyan
+    keyword whole fsucc   cyan
+    keyword whole fzero   cyan
+    keyword whole vsucc   cyan
+    keyword whole vzero   cyan
+
+# Constructors of Types from Base Library
+
+    keyword whole \\      magenta
+    keyword whole app     magenta
+    keyword whole lam     magenta
+    keyword whole lambda  magenta
+    keyword whole apply   magenta
+    keyword whole pair    magenta
+    keyword whole pr1     magenta
+    keyword whole pr2     magenta
+    keyword whole pr2     magenta
+    keyword whole refl    magenta
+    keyword whole sym     magenta
+    keyword whole trans   magenta
+    keyword whole contr   magenta
+    keyword whole ap      magenta
+    keyword whole cong    magenta
+    keyword whole subst   magenta
+    keyword whole J       magenta
+    keyword whole singl   magenta
+    keyword whole eta     magenta
+
+    keyword whole integer magenta
+    keyword whole stream  magenta
+    keyword whole list    magenta
+    keyword whole either    magenta
+    keyword whole empty    magenta
+    keyword whole unit    magenta
+    keyword whole tuple    magenta
+    keyword whole bool    magenta
+    keyword whole functor    magenta
+    keyword whole category    magenta
+    keyword whole pure    magenta
+    keyword whole applicative    magenta
+    keyword whole monad    magenta
+    keyword whole prop magenta
+    keyword whole groupoid magenta
+    keyword whole set magenta
+    keyword whole isContr magenta
+    keyword whole isProp magenta
+    keyword whole isGroupoid magenta
+    keyword whole isSet magenta
+    keyword whole Sigma magenta
+    keyword () magenta
+    keyword [] magenta
+    keyword whole Pi magenta
+    keyword whole Id magenta
+    keyword whole Equ magenta
+    keyword whole Path magenta
+    keyword whole PathP magenta
+    keyword whole HPath magenta
+
+context exclusive {\- \-} lightgray
+    spellcheck
+
+context exclusive -- \n lightgray

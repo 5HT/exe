@@ -1,0 +1,56 @@
+module trunc where
+import path
+import prop
+
+data pTrunc (A : U)
+  = inc (a : A)
+  | inh (x y: pTrunc A) < i > [ (i=0) -> x, (i=1) -> y ]
+
+pTruncIsProp (A : U) : isProp (pTrunc A) =
+ \ (x y : pTrunc A)-><i>inh {pTrunc A} x y @ i
+
+pTruncRec (A B : U) (pP : isProp B) (f : A->B) : pTrunc A -> B = split
+  | inc a -> f a
+  | inh x y @ i -> pP (pTruncRec A B pP f x) (pTruncRec A B pP f y) @ i
+
+pTruncElim (A : U) (B : (pTrunc A) -> U)
+           (pP : (x : pTrunc A) -> isProp (B x))
+           (f : (a : A) -> B (inc a))
+           : (x : pTrunc A) -> B x = split
+  | inc a -> f a
+  | inh x y @ i ->
+    lemPropF (pTrunc A) B pP x y
+      (<j> inh{pTrunc A} x y @ j)
+      (pTruncElim A B pP f x)
+      (pTruncElim A B pP f y)
+    @ i
+
+data sTrunc (A : U) -- ok
+  = inc (a : A)
+  | line (a b: sTrunc A) (p q: Path (sTrunc A) a b) <i j>
+        [ (i=0) -> p @ j,
+          (i=1) -> q @ j,
+          (j=0) -> a,
+          (j=1) -> b ]
+
+
+sTr (A : U) (a b : sTrunc A) (p q: Path (sTrunc A) a b) : Path (Path (sTrunc A) a b) p q =
+  <i j> line {sTrunc A} a b p q @ i @ j
+
+sTruncRec (A: U) (B: U) (bS: isSet B) (f: A -> B): sTrunc A -> B = split
+  | inc a -> f a
+  | line a b p q @ i j -> (bS (sTruncRec A B bS f a)
+                              (sTruncRec A B bS f b)
+                              (<k> sTruncRec A B bS f (p @ k))
+                              (<k> sTruncRec A B bS f (q @ k))) @ i @ j
+
+data gTrunc (A : U)
+  = inc (a : A)
+  | squashC (a b : gTrunc A) (p q : Path (gTrunc A) a b)
+            (r s: Path (Path (gTrunc A) a b) p q) <i j k>
+       [ (i=0) -> r @ j @ k
+       , (i=1) -> s @ j @ k
+       , (j=0) -> p @ k
+       , (j=1) -> q @ k
+       , (k=0) -> a
+       , (k=1) -> b]

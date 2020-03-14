@@ -59,6 +59,7 @@ rsum -> id tele : {ctor,'$1','$2'}.
 rsum -> id tele '|' rsum : [{ctor,'$1','$2'}|'$4'].
 rsum -> id tele '<' ids '>' sys : {htor,'$1','$2','$4','$6'}.
 rsum -> id tele '<' ids '>' sys '|' rsum : [{htor,'$1','$2','$4','$6'}|'$8'].
+
 Rootsymbol mod.
 Right 100 exp.
 Right 100 arrow.

@@ -17,4 +17,4 @@ install:
   - ./mad dep com pla bun cub
 
 script:
-  - ./mad com
+  - ./cub a priv/mltt.ctt

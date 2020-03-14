@@ -21,7 +21,6 @@ mode(S)      -> application:set_env(exe,mode,S).
 mode()       -> application:get_env(exe,mode,"Exe").
 
 console(S)   -> boot(),
-                mad_repl:load(),
                 Fold = lists:foldr(fun(I,O) ->
                       R = rev(I),
                       Res = lists:foldl(fun(X,A) -> ?MODULE:(atom(X))(A) end,hd(R),tl(R)),

@@ -5,15 +5,15 @@
 
 # Erlang
 
-```sh
+```erlang
 $ sudo apt install erlang
 ```
-```sh
+```erlang
 $ curl -fsSL https://git.io/fpYm4 > mad
 $ chmod +x mad
 $ sudo cp mad /usr/local/bin
 ```
-```sh
+```erlang
 $ mad dep com pla release cub
 $ ./cub parse file priv/mltt.ctt
 ```
@@ -22,6 +22,8 @@ $ ./cub parse file priv/mltt.ctt
 
 ```elixir
 $ sudo apt install elixir
+```
+```elixir
 $ mix deps.get
 $ iex -S mix
 > :cub.console ['parse','file','priv/mltt.ctt']

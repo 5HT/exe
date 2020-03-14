@@ -1,8 +1,11 @@
 # HTS: Homotopy Type System for Erlang
 
-# Install <a href="https://mad.n2o.dev">MAD</a>
+# Prerequisites
+
+HTS is written in Erlang and uses <a href="https://mad.n2o.dev">mad</a> Erlang build tool.
 
 ```sh
+$ sudo apt install erlang
 $ curl -fsSL https://git.io/fpYm4 > mad
 $ chmod +x mad
 $ sudo cp mad /usr/local/bin

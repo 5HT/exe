@@ -6,11 +6,22 @@
 -compile(export_all).
 
 unicode()    -> io:setopts(standard_io, [{encoding, unicode}]).
-main(A)      -> unicode(), case A of [] -> mad:main(["sh"]); A -> halt(lists:sum(console(A))) end.
+main(A)      -> unicode(), case A of [] -> halt(help()); A -> halt(lists:sum(console(A))) end.
 start()      -> start(normal,[]).
 start(_,_)   -> unicode(), supervisor:start_link({local,cub},cub,[]).
 stop(_)      -> ok.
 init([])     -> {ok, {{one_for_one, 5, 10}, []}}.
+return(true) -> 1;
+return(false)-> 0.
+
+help() ->
+  io:format("HTS CTT-CCHM Homotopy Type System version ~s~n",["1.3.0"]),
+  io:format("~n"),
+  io:format(" usage = cub list ~n"),
+  io:format("  list = [] | cmd [opt] list ~n"),
+  io:format("   cmd = parse <tokens> | file <name> | a <name> ~n"),
+  io:format("         fst <tuple> | snd <tuple> ~n"),
+  return(false).
 
 console(S) ->
   lists:foldr(fun(I,O) ->

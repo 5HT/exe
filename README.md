@@ -3,6 +3,16 @@
 [![Build Status](https://travis-ci.com/groupoid/hts.svg?branch=master)](https://travis-ci.com/groupoid/hts)
 [![Hex pm](http://img.shields.io/hexpm/v/hts.svg?style=flat)](https://hex.pm/packages/hts)
 
+```
+$ ./cub
+HTS CTT-CCHM Homotopy Type System version 1.3.0
+
+ usage = cub list
+  list = [] | cmd [opt] list
+   cmd = parse <tokens> | file <name> | a <name>
+         fst <tuple> | snd <tuple>
+```
+
 # Erlang
 
 ```sh

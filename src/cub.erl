@@ -5,29 +5,19 @@
 -export([init/1, start/2, stop/1]).
 -compile(export_all).
 
-opt()        -> [ set, named_table, { keypos, 1 }, public ].
-tables()     -> [ programs, types, terms, shell ].
-boot()       -> [ ets:new(T,opt()) || T <- tables() ],
-                [ code:del_path(S) || S <- code:get_path(), string:str(S,"stdlib") /= 0 ].
 unicode()    -> io:setopts(standard_io, [{encoding, unicode}]).
-main(A)      -> unicode(), case A of [] -> mad:main(["sh"]); A -> console(A) end.
+main(A)      -> unicode(), case A of [] -> mad:main(["sh"]); A -> halt(lists:sum(console(A))) end.
 start()      -> start(normal,[]).
 start(_,_)   -> unicode(), supervisor:start_link({local,cub},cub,[]).
 stop(_)      -> ok.
-init([])     -> boot(), mode("normal"), {ok, {{one_for_one, 5, 10}, []}}.
-ver(_)       -> ver().
-ver()        -> string:join([keyget(I,element(2,application:get_all_key(exe)))||I<-[description,vsn]]," ").
-mode(S)      -> application:set_env(exe,mode,S).
-mode()       -> application:get_env(exe,mode,"Exe").
+init([])     -> {ok, {{one_for_one, 5, 10}, []}}.
 
-console(S)   -> boot(),
-                Fold = lists:foldr(fun(I,O) ->
-                      R = rev(I),
-                      Res = lists:foldl(fun(X,A) -> ?MODULE:(atom(X))(A) end,hd(R),tl(R)),
-                      io:format("~tp~n",[Res]),
-                      []
-                      end, [], string:tokens(S,[","])),
-                halt(lists:sum(Fold)).
+console(S) ->
+  lists:foldr(fun(I,O) ->
+    R = rev(I),
+    Res = lists:foldl(fun(X,A) -> ?MODULE:(atom(X))(A) end,hd(R),tl(R)),
+    io:format("~tp~n",[Res]),
+    [] end, [], string:tokens(S,[","])).
 
 rev(X)           -> lists:reverse(X).
 flat(X)          -> lists:flatten(X).

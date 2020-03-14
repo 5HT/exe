@@ -15,11 +15,20 @@ $ chmod +x mad
 $ sudo cp mad /usr/local/bin
 ```
 
-# Build
+# Erlang
 
 ```sh
 $ mad dep com pla release cub
-$ ./cub a priv/mltt.ctt
+$ ./cub parse file priv/mltt.ctt
+```
+
+# Elixir
+
+```elixir
+$ sudo apt install elixir
+$ mix deps.get
+$ iex -S mix
+> :cub.console ['parse','file','priv/mltt.ctt']
 ```
 
 # Credits

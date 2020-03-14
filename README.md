@@ -5,15 +5,15 @@
 
 # Erlang
 
-```erlang
+```sh
 $ sudo apt install erlang
 ```
-```erlang
+```sh
 $ curl -fsSL https://git.io/fpYm4 > mad
 $ chmod +x mad
 $ sudo cp mad /usr/local/bin
 ```
-```erlang
+```sh
 $ mad dep com pla release cub
 $ ./cub parse file priv/mltt.ctt
 ```

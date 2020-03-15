@@ -10,7 +10,7 @@ HTS CTT-CCHM Homotopy Type System version 1.3.0
  usage = cub list
   list = [] | cmd [opt] list
    cmd = parse <tokens> | file <name> | a <name>
-         fst <tuple> | snd <tuple>
+       | fst <tuple> | snd <tuple>
 ```
 
 # Erlang

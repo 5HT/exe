@@ -1,0 +1,129 @@
+module recursion where
+
+import control
+
+data fix    (F:U -> U) = Fix (point: F (fix F))
+out_        (F:U -> U) : fix F -> F (fix F) = split | Fix f -> f
+in_         (F:U -> U) : F (fix F) -> fix F = \(x: F (fix F)) -> Fix x
+
+data mu     (F:U ->U) (A B:U) = Return (a: A) | Bind (f: F B)
+data nu     (F:U ->U) (A B:U) = CoBind (a: A)        (f: F B)
+
+data free   (F:U ->U) (A:U)   = Free    (_: fix (mu F A))
+data cofree (F:U ->U) (A:U)   = CoFree  (_: fix (nu F A))
+unfree      (F:U ->U) (A:U):  free   F A -> fix (mu F A) = split | Free   a -> a
+uncofree    (F:U ->U) (A:U):  cofree F A -> fix (nu F A) = split | CoFree a -> a
+
+cata (A: U) (F: functor) (alg: F.1 A -> A) (f: fix F.1): A
+   = alg (F.2 (fix F.1) A (cata A F alg) (out_ F.1 f))
+
+ana  (A: U) (F: functor) (coalg: A -> F.1 A) (a: A): fix F.1
+   = Fix (F.2 A (fix F.1) (ana A F coalg) (coalg a))
+
+para (A: U) (F: functor) (alg: F.1 (tuple (fix F.1) A)->A) (f: fix F.1): A
+   = alg (F.2 (fix F.1) (tuple (fix F.1) A)
+              (\(m: fix F.1) -> pair m (para A F alg m)) (out_ F.1 f))
+
+hylo (A B: U) (F: functor) (alg: F.1 B -> B) (coalg: A -> F.1 A) (a: A): B
+   = alg (F.2 A B (hylo A B F alg coalg) (coalg a))
+
+zygo (A B: U) (F: functor) (g: F.1 A -> A)
+     (alg: F.1 (tuple A B) -> B) (f: fix F.1): B
+  = snd A B (cata (tuple A B) F
+        (\(x: F.1 (tuple A B)) -> pair (g (F.2 (tuple A B) A
+             (\(y: tuple A B) -> fst A B y) x)) (alg x)) f)
+
+prepro (A: U) (F: functor) (nt: F.1(fix F.1) -> F.1(fix F.1))
+       (alg: F.1 A -> A) (f: fix F.1): A
+  = alg (F.2 (fix F.1) A (\(x: fix F.1) ->
+        prepro A F nt alg (cata (fix F.1) F (\(y: F.1(fix F.1))
+    -> Fix (nt y)) x)) (out_ F.1 f))
+
+postpro (A: U) (F: functor) (nt : F.1(fix F.1) -> F.1(fix F.1))
+        (coalg: A -> F.1 A) (a: A): fix F.1
+  = Fix (F.2 A (fix F.1) (\(x: A) -> ana (fix F.1) F (\(y: fix F.1)
+    -> nt (out_ F.1 y)) (postpro A F nt coalg x)) (coalg a))
+
+apo (A: U) (F: functor)
+    (coalg: A -> F.1 (either (fix F.1) A)) (a: A): fix F.1
+  = Fix (F.2 (either (fix F.1) A) (fix F.1) (\(x: either (fix F.1) A)
+    -> eitherRec (fix F.1) A (fix F.1) (idfun (fix F.1)) (apo A F coalg) x) (coalg a))
+
+gapo (A B: U) (F: functor)
+     (coalg: A -> F.1 A) (coalg2: B -> F.1(either A B)) (b: B): fix F.1
+  = Fix ((F.2 (either A B) (fix F.1) (\(x: either A B)
+    -> eitherRec A B (fix F.1) (\(y: A) -> ana A F coalg y) (\(z: B)
+    -> gapo A B F coalg coalg2 z) x) (coalg2 b)))
+
+futu (A: U) (F: functor)
+     (f: A -> F.1 (free F.1 A)) (a: A): fix F.1
+  = Fix (F.2 (free F.1 A) (fix F.1) (\(z: free F.1 A) -> w z) (f a)) where
+  w: free F.1 A -> fix F.1 = split
+    | Free x -> unpack_fix x where
+  unpack_free: mu F.1 A (fix (mu F.1 A)) -> fix F.1 = split
+    | Return x -> futu A F f x
+    | Bind g -> Fix (F.2 (fix (mu F.1 A)) (fix F.1)
+                        (\(x: fix (mu F.1 A)) -> w (Free x)) g) where
+  unpack_fix: fix (mu F.1 A) -> fix F.1 = split
+    | Fix x -> unpack_free x
+
+histo (A:U) (F: functor)
+      (f: F.1 (cofree F.1 A) -> A) (z: fix F.1): A
+  = extract A ((cata (cofree F.1 A) F (\(x: F.1 (cofree F.1 A)) ->
+    CoFree (Fix (CoBind (f x) ((F.2 (cofree F.1 A)
+    (fix (nu F.1 A)) (uncofree F.1 A) x)))))) z) where
+  extract (A: U): cofree F.1 A -> A = split
+    | CoFree f -> unpack_fix f where
+  unpack_fix: fix (nu F.1 A) -> A = split
+    | Fix f -> unpack_cofree f where
+  unpack_cofree: nu F.1 A (fix (nu F.1 A)) -> A = split
+    | CoBind a -> a
+
+chrono (A B: U) (F: functor)
+       (f: F.1 (cofree F.1 B) -> B)
+       (g: A -> F.1 (free F.1 A))
+       (a: A): B = histo B F f (futu A F g a)
+
+mcata (T: U) (F: U -> U)
+      (phi: ((fix F) -> T) -> F (fix F) -> T) (t: fix F): T
+    = phi (\(x: fix F) -> mcata T F phi x) (out_ F t)
+
+meta  (A B: U) (F: functor)
+      (f: A -> F.1 A) (e: B -> A)
+      (g: F.1 B -> B) (t: fix F.1): fix F.1
+    = ana A F f (e (cata B F g t))
+
+mutu (A B: U) (F: functor)
+     (f: F.1 (tuple A B) -> B)
+     (g: F.1 (tuple B A) -> A)
+     (t: fix F.1): A
+   = g (F.2 (fix F.1) (tuple B A) (\(x: fix F.1) ->
+     pair (mutu B A F g f x) (mutu A B F f g x)) (out_ F.1 t))
+
+ind   (F: U -> U) (A: U): U
+    = (i: F (fix F) -> fix F)
+    * (o: fix F -> F (fix F))
+    * (fold_: (F A -> A) -> fix F -> A)
+    * ((F (cofree F A) -> A) -> fix F -> A)
+
+coind (F: U -> U) (A: U): U
+    = (o: fix F -> F (fix F))
+    * (i: F (fix F) -> fix F)
+    * (unfold_: (A -> F A) -> A -> fix F)
+    * ((A -> F (free F A)) -> A -> fix F)
+
+inductive   (F: functor) (A: U): ind F.1 A = (in_ F.1,out_ F.1,cata A F,histo A F)
+coinductive (F: functor) (A: U): coind F.1 A = (out_ F.1,in_ F.1,ana A F,futu A F)
+
+data W (A:U) (B:A -> U) = sup (x:A) (f:B(x) -> W A B)
+
+whead (A:U)(B:A -> U): W A B -> A                            = split | sup x f -> x
+wtail (A:U)(B:A -> U): (x:W A B) -> B (whead A B x) -> W A B = split | sup x f -> f
+
+Wrec (A:U) (B:A -> U) (P: U)
+     (alg: (a:A) -> (B(a) -> W A B) -> ((b:B(a)) -> P) -> P)
+   : W A B -> P = split | sup x g -> alg x g (\(h:B(x)) -> Wrec A B P alg (g h))
+
+Wind (A:U) (B:A -> U) (P:W A B -> U)
+     (alg: (a:A) (f:B(a) -> W A B) -> ((b:B(a))->P (f b)) -> P (sup a f))
+   : (w: W A B) -> P w = split | sup x g -> alg x g (\(b:B(x)) -> Wind A B P alg (g b))

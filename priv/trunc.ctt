@@ -1,3 +1,4 @@
+--
 module trunc where
 import path
 import prop
@@ -9,7 +10,7 @@ data pTrunc (A : U)
 pTruncIsProp (A : U) : isProp (pTrunc A) =
  \ (x y : pTrunc A)-><i>inh {pTrunc A} x y @ i
 
-pTruncRec (A B : U) (pP : isProp B) (f : A->B) : pTrunc A -> B = split
+pTruncRec (A B : U) (pP : isProp B) (f:A->B) : pTrunc A -> B = split
   | inc a -> f a
   | inh x y @ i -> pP (pTruncRec A B pP f x) (pTruncRec A B pP f y) @ i
 
@@ -25,7 +26,7 @@ pTruncElim (A : U) (B : (pTrunc A) -> U)
       (pTruncElim A B pP f y)
     @ i
 
-data sTrunc (A : U) -- ok
+data sTrunc (A : U)
   = inc (a : A)
   | line (a b: sTrunc A) (p q: Path (sTrunc A) a b) <i j>
         [ (i=0) -> p @ j,

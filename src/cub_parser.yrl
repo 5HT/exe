@@ -28,7 +28,7 @@ f2 -> '-' f2 : {neg,'$2'}.
 f2 -> id : '$1'.
 exp -> 'split' cobrs : {split,'$2'}.
 exp -> id : '$1'.
-exp -> id '{' exp '}': {inst,'$1','$h3'}.
+exp -> id '{' exp '}': {inst,'$1','$3'}.
 exp -> '<' ids '>' exp : {plam,uncons('$2'),'$4'}.
 exp -> exp '.1' : {fst,'$1'}.
 exp -> exp '.2' : {snd,'$1'}.

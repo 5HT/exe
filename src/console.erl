@@ -6,7 +6,7 @@ unicode()  -> io:setopts(standard_io, [{encoding, unicode}]).
 fst({X,_}) -> X.
 snd({_,X}) -> X.
 file(F)    -> lex(read(F)).
-a(F)       -> snd(parse(lex(read(F)))).
+a(F)       -> parse(file(F)).
 
 read(F) ->
   case file:read_file(F) of

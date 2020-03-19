@@ -25,6 +25,6 @@ console(S) ->
 help() ->
   io:format("HTS CTT-CCHM Homotopy Type System ~s~n~n",[version()]),
   io:format(" usage = homotopy args ~n"),
-  io:format("  args = [] | cmd | cmd , args ~n"),
+  io:format("  args = [] | cmd | cmd args ~n"),
   io:format("   cmd = parse <tokens> | lex <string> | read <name> ~n"),
   io:format("       | fst <tuple> | snd <tuple> | a <name> | file <name> ~n"), 0.

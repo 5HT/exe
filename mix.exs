@@ -1,11 +1,11 @@
-defmodule HTS.Mixfile do
+defmodule Homotopy.Mixfile do
   use Mix.Project
   def deps, do: [ {:ex_doc, "~> 0.11", only: :dev} ]
   def application, do: [mod: {:homotopy, []}, applications: []]
   def project do
     [ app: :homotopy,
       version: "1.3.1",
-      description: "HTS CTT-CCHM Homotopy Type System",
+      description: "CTT-CCHM Homotopy Type System",
       package: package(),
       deps: deps()]
   end

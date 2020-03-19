@@ -5,7 +5,7 @@
 
 ```
 $ ./homotopy
-HTS CTT-CCHM Homotopy Type System 1.3.1
+CTT-CCHM Homotopy Type System 1.3.1
 
  usage = homotopy args
   args = [] | cmd | cmd args

@@ -1,0 +1,7 @@
+{application, homotopy, [
+   {description, "CTT-CCHM Homotopy Type System"},
+   {vsn, "1.3.1"},
+   {registered, []},
+   {applications, [kernel, stdlib, parsetools]},
+   {mod, { homotopy, []}},
+   {env, []} ]}.

@@ -3,27 +3,22 @@
 -vsn("1.3.1").
 -behaviour(supervisor).
 -behaviour(application).
--export([init/1, start/2, stop/1]).
--compile(export_all).
+-export([init/1, start/2, stop/1, main/1]).
 
-main(A)     -> unicode(), case A of [] -> halt(help()); A -> halt(lists:sum(console(A))) end.
-atom(X)     -> list_to_existing_atom(lists:concat([X])).
-version()   -> proplists:get_value(vsn,module_info(attributes)).
-unicode()   -> io:setopts(standard_io, [{encoding, unicode}]).
-init([])    -> {ok, {{one_for_one, 5, 10}, []}}.
-start()     -> start(normal,[]).
-start(_,_)  -> unicode(), supervisor:start_link({local,?MODULE},?MODULE,[]).
-stop(_)     -> ok.
+init([])   -> {ok, {{one_for_one, 5, 10}, []}}.
+main(A)    -> console:unicode(), case A of [] -> halt(help()); A -> halt(lists:sum(console(A))) end.
+start(_,_) -> console:unicode(), supervisor:start_link({local,?MODULE},?MODULE,[]).
+stop(_)    -> ok.
 
 console(S) ->
   lists:foldr(fun(I,_) ->
     R = lists:reverse(I),
-    Res = lists:foldl(fun(X,A) -> console:(atom(X))(A) end,hd(R),tl(R)),
-    io:format("~tp~n",[Res]),
+    io:format("~tp~n",[lists:foldl(fun(X,A) ->
+       console:(list_to_atom(lists:concat([X])))(A) end,hd(R),tl(R))]),
     [] end, [], string:tokens(S,[","])).
 
 help() ->
-  io:format("HTS CTT-CCHM Homotopy Type System ~s~n~n",[version()]),
+  io:format("CTT-CCHM Homotopy Type System ~s~n~n",[proplists:get_value(vsn,module_info(attributes))]),
   io:format(" usage = homotopy args ~n"),
   io:format("  args = [] | cmd | cmd args ~n"),
   io:format("   cmd = parse <tokens> | lex <string> | read <name> ~n"),

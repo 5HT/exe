@@ -15,12 +15,12 @@ read(F) ->
 
 lex({error,S}) -> {error,S};
 lex({ok,S}) ->
-  case cub_lexer:string(S) of
+  case lexer:string(S) of
     {ok,T,_} -> {ok,T};
     {error,{L,A,X},_} -> {error,{lexer,L,A,element(2,X)}} end.
 
 parse({error,T}) -> {error,T};
 parse({ok,F}) ->
-  case cub_parser:parse(F) of
+  case parser:parse(F) of
     {ok,AST}        -> {ok,AST};
     {error,{L,A,S}} -> {error,{parser,L,A,S}} end.

@@ -76,10 +76,10 @@ Nonterminals mod imp tele exp app dec def ids sum cotele rsum
              br brs cobrs codec formula f1 f2 side sides sys papp.
 
 Terminals id digits atom oper skip lam meet join arrow
-          '(' ')' '[' ']' '<' '>' '{' '}' '.' ','
-          ':' '=' '#' '|' '-' '*' '/' '@' '0' '1'
-          'module' 'where' 'import' 'record' 'data' 'split'
-          'let' 'in' '.1' '.2'  'comp' 'fill' 'glue' 'unglue'.
+          '(' ')' '[' ']' '<' '>' '{' '}' '.' ',' '.1'
+          ':' '=' '#' '|' '-' '*' '/' '@' '0' '1' '.2'
+          'module' 'where' 'import' 'data' 'split'
+          'let' 'in' 'comp' 'fill' 'glue' 'unglue'.
 
 Erlang code.
 

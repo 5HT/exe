@@ -26,7 +26,7 @@ $ sudo cp mad /usr/local/bin
 ```
 ```sh
 $ mad compile release homotopy
-$ ./homotopy parse file priv/mltt.ctt
+$ ./homotopy parse file core/mltt.ctt
 ```
 
 # Elixir
@@ -37,7 +37,7 @@ $ sudo apt install elixir
 ```elixir
 $ mix deps.get
 $ iex -S mix
-> :homotopy.console ['parse','file','priv/mltt.ctt']
+> :homotopy.console ['parse','file','core/mltt.ctt']
 ```
 
 # Credits

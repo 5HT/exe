@@ -3,7 +3,7 @@
 -vsn("1.3.1").
 -behaviour(supervisor).
 -behaviour(application).
--export([init/1, start/2, stop/1, main/1]).
+-export([init/1, start/2, stop/1, main/1, console/1]).
 
 init([])   -> {ok, {{one_for_one, 5, 10}, []}}.
 main(A)    -> console:unicode(), case A of [] -> halt(help()); A -> halt(lists:sum(console(A))) end.

@@ -18,3 +18,6 @@ install:
 
 script:
   - ./homotopy a priv/mltt.ctt
+  - ./homotopy a priv/path.ctt
+  - ./homotopy a priv/trunc.ctt
+  - ./homotopy a priv/recursion.ctt

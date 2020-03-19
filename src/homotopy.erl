@@ -11,10 +11,8 @@ start(_,_) -> console:unicode(), supervisor:start_link({local,?MODULE},?MODULE,[
 stop(_)    -> ok.
 
 console(S) ->
-  lists:foldr(fun(I,_) ->
-    R = lists:reverse(I),
-    io:format("~tp~n",[lists:foldl(fun(X,A) ->
-       console:(list_to_atom(lists:concat([X])))(A) end,hd(R),tl(R))]),
+  lists:foldr(fun(I,_) -> R = lists:reverse(I),
+    io:format("~tp~n",[lists:foldl(fun(X,A) -> console:(list_to_atom(lists:concat([X])))(A) end,hd(R),tl(R))]),
     [] end, [], string:tokens(S,[","])).
 
 help() ->

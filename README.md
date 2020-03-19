@@ -37,7 +37,7 @@ $ sudo apt install elixir
 ```elixir
 $ mix deps.get
 $ iex -S mix
-> :cub.console ['parse','file','priv/mltt.ctt']
+> :homotopy.console ['parse','file','priv/mltt.ctt']
 ```
 
 # Credits

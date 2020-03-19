@@ -5,12 +5,11 @@
 
 ```
 $ ./homotopy
-HTS CTT-CCHM Homotopy Type System version 1.3.0
+HTS CTT-CCHM Homotopy Type System 1.3.1
 
- usage = cub list
-  list = [] | cmd [opt] list
-   cmd = parse <tokens> | file <name> | a <name>
-       | fst <tuple> | snd <tuple>
+ usage = homotopy args
+  args = [] | cmd | cmd , args
+   cmd = parse <tokens> | file <name> | fst <tuple> | snd <tuple>
 ```
 
 # Erlang
@@ -24,7 +23,7 @@ $ chmod +x mad
 $ sudo cp mad /usr/local/bin
 ```
 ```sh
-$ mad dep com pla release homotopy
+$ mad compile release homotopy
 $ ./homotopy parse file priv/mltt.ctt
 ```
 

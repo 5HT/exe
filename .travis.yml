@@ -14,7 +14,7 @@ notifications:
 install:
   - "curl -fsSL https://raw.github.com/synrc/mad/master/mad > mad"
   - "chmod +x mad"
-  - ./mad dependencies compile plan release homotopy
+  - ./mad compile release homotopy
 
 script:
   - ./homotopy a priv/mltt.ctt

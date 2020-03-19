@@ -17,16 +17,15 @@ return(false)-> 0.
 version()    -> proplists:get_value(vsn,module_info(attributes)).
 
 help() ->
-  io:format("HTS CTT-CCHM Homotopy Type System version ~s~n",[version()]),
+  io:format("HTS CTT-CCHM Homotopy Type System ~s~n",[version()]),
   io:format("~n"),
-  io:format(" usage = cub list ~n"),
-  io:format("  list = [] | cmd [opt] list ~n"),
-  io:format("   cmd = parse <tokens> | file <name> | a <name> ~n"),
-  io:format("         fst <tuple> | snd <tuple> ~n"),
+  io:format(" usage = homotopy args ~n"),
+  io:format("  args = [] | cmd | cmd , args ~n"),
+  io:format("   cmd = parse <tokens> | file <name> | fst <tuple> | snd <tuple> ~n"),
   return(false).
 
 console(S) ->
-  lists:foldr(fun(I,O) ->
+  lists:foldr(fun(I,_) ->
     R = rev(I),
     Res = lists:foldl(fun(X,A) -> ?MODULE:(atom(X))(A) end,hd(R),tl(R)),
     io:format("~tp~n",[Res]),
@@ -43,7 +42,7 @@ keyget(K,D)      -> proplists:get_value(K,D).
 keyget(K,D,I)    -> lists:nth(I+1,proplists:get_all_values(K,D)).
 
 convert(A,S, nt) -> convert(A,S);
-convert(A,S, _)  -> A.
+convert(A,_, _)  -> A.
 
 convert([],Acc) -> rev(Acc);
 convert([$>|T],Acc) -> convert(T,[61502|Acc]);

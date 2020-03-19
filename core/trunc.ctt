@@ -46,12 +46,12 @@ sTruncRec (A: U) (B: U) (bS: isSet B) (f: A -> B): sTrunc A -> B = split
                               (<k> sTruncRec A B bS f (q @ k))) @ i @ j
 
 data gTrunc (A : U)
-  = inc (максим : A)
+  = inc (a : A)
   | squashC (a b : gTrunc A) (p q : Path (gTrunc A) a b)
             (r s: Path (Path (gTrunc A) a b) p q) <i j k>
        [ (i=0) -> r @ j @ k
        , (i=1) -> s @ j @ k
        , (j=0) -> p @ k
        , (j=1) -> q @ k
-       , (k=0) -> максим
+       , (k=0) -> a
        , (k=1) -> b]

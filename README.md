@@ -9,7 +9,8 @@ HTS CTT-CCHM Homotopy Type System 1.3.1
 
  usage = homotopy args
   args = [] | cmd | cmd , args
-   cmd = parse <tokens> | file <name> | fst <tuple> | snd <tuple>
+   cmd = parse <tokens> | lex <string> | read <name>
+       | fst <tuple> | snd <tuple> | a <name> | file <name>
 ```
 
 # Erlang

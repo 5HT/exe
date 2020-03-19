@@ -1,0 +1,230 @@
+module path where
+
+Path     (A: U) (a b: A): U = PathP (<i> A) a b
+HPath  (A B: U) (a: A) (b: B) (P: Path U A B) : U = PathP P a b
+refl     (A: U) (a: A): Path A a a = <i> a
+singl    (A: U) (a: A): U = (x: A) * Path A a x
+eta      (A: U) (a: A): singl A a = (a,refl A a)
+contr    (A: U) (a b: A) (p: Path A a b): Path (singl A a) (eta A a) (b,p) = <i> (p @ i,<j> p @ i/\j)
+sym      (A: U) (a b: A) (p: Path A a b): Path A b a = <i> p @ -i
+cong   (A B: U) (f: A->B) (a b: A) (p: Path A a b): Path B (f a) (f b) = <i> f (p @ i)
+ap       (A: U) (a x:A) (B:A->U) (f: A->B a) (b: B a) (p: Path A a x): Path (B a) (f a) (f x) = <i> f (p @ i)
+trans  (A B: U) (p: Path U A B) (a : A): B = transport p a
+subst    (A: U) (P: A -> U) (a b: A) (p: Path A a b) (e: P a) : P b = comp (<i> P (p @ i)) e []
+inv      (A: U) (a b: A) (p: Path A a b): Path A b a = <i> p @ -i
+coerce (A B: U) (p: Path U A B): A -> B = \ (x: A) -> trans A B p x
+
+J   (A: U) (a: A) (C: (x : A) -> Path A a x -> U) (d: C a (refl A a)) (x: A) (p: Path A a x)
+  : C x p = subst (singl A a) T (eta A a) (x, p) (contr A a x p) d
+     where T (z : singl A a) : U = C (z.1) (z.2)
+
+trans_comp (A : U) (a : A) : Path A a (trans A A (<_> A) a) = fill (<_> A) a []
+subst_comp (A : U) (P : A -> U) (a : A) (e : P a): Path (P a) e (subst A P a a (refl A a) e) = trans_comp (P a) e
+J_comp     (A : U) (a : A) (C : (x : A) -> Path A a x -> U)
+        (d : C a (refl A a)) : Path (C a (refl A a)) d (J A a C d a (refl A a))
+      = subst_comp (singl A a) T (a, refl A a) d where
+        T (z : singl A a) : U = C (z.1) (z.2)
+
+symJ (A: U) (a b: A) (p: Path A a b): Path A b a
+  = J A a T (refl A a) b p where T (x: A) (_: Path A a x): U = Path A x a
+
+transJ (A: U) (a b c: A) (p: Path A a b) (q: Path A b c): Path A a c
+  = undefined
+
+composeUniv (A B C: U) (p: Path U A B) (q: Path U B C): Path U A C
+    = comp (<i> Path U A (q @ i)) p []
+
+composition (A: U) (a b c: A) (p: Path A a b) (q: Path A b c): Path A a c
+    = comp (<i> Path A a (q @ i)) p []
+
+compositionInv (A: U) (a b c: A) (p: Path A a b) (q: Path A b c): Path A c a
+    = inv A a c (composition A a b c p q)
+
+join (A: U) (a b: A) (p: Path A a b)
+  : PathP (<x> Path A (p @ x) b) p (<_> b)
+  = <y x> p @ (x \/ y)
+
+meet (A: U) (a b: A) (p: Path A a b)
+  : PathP (<x> Path A a (p @ x)) (<_> a) p
+  = <x y> p @ (x /\ y)
+
+app0 (A: U) (a b: A) (p: Path A a b): A = p @ 0
+app1 (A: U) (a b: A) (p: Path A a b): A = p @ 1
+
+kan (A: U) (a b c d: A) (p: Path A a b) (q: Path A a c) (r: Path A b d): Path A c d
+    = <i> comp (<j>A) (p @ i) [(i=0) -> q, (i=1) -> r ]
+
+kanOp (A: U) (a: A) (p: Path A a a) (b: A) (q: Path A a b)
+  : Path A b b
+  = kan A a a b b p q q
+
+kanOpRefl (A: U) (a b: A) (q: Path A a b)
+  : Path (Path A b b) (kanOp A a (refl A a) b q) (refl A b)
+  = <j i> comp (refl U A) (q @ j) [ (i = 0) -> <k> q @ j \/ k,
+                                    (i = 1) -> <k> q @ j \/ k,
+                                    (j = 1) -> <k> b ]
+
+transC    (A:U) (a:A) : A = comp (<_>A) a []
+lemTransC (A:U) (a:A) : Path A (transC A a) a = <i>comp (<_>A) a [(i=1) -> <_>a]
+
+compInv' (A:U) (a:A)
+  : (x:A) (p:Path A a x)
+ -> Path (Path A x x) (<_>x) (composition A x a x (<i>p@-i) p)
+  = J A a (\  (x:A) (p:Path A a x)
+ -> Path (Path A x x) (<_>x) (composition A x a x (<i>p@-i) p)) rem where
+    rem : Path (Path A a a) (<_>a) (<i>comp (<_>A) a [(i=0) -> <_>a,
+                                                      (i=1) -> <_>a])
+        = <j i>comp (<_>A) a [(j=0) -> <_>a,
+                              (i=0) -> <_>a,
+                              (i=1) -> <_>a]
+
+compInv (A:U) (a b:A) (q:Path A a b)
+  : (x:A) (p:Path A b x)
+ -> Path (Path A a b) q (composition A a x b (composition A a b x q p) (<i>p@-i))
+  = J A b (\ (x:A) (p: Path A b x)
+    -> Path (Path A a b) q (composition A a x b (composition A a b x q p) (<i>p@-i))) rem where
+    rem : Path (Path A a b) q (<i>comp  (<_>A) (comp (<_>A)(q@i) [(i=0) -> <_>a,
+                                                                  (i=1)-><_>b])
+                                                                 [(i=0)-><_>a,
+                                                                  (i=1)-><_>b])
+        = <j i>comp (<_>A) (comp (<_>A)(q@i) [(j=0)-><_>q@i,
+                                              (i=0)-><_>a,
+                                              (i=1)-><_>b])
+                                             [(j=0)-><_>q@i,
+                                              (i=0)-><_>a,
+                                              (i=1)-><_>b]
+
+compPathInv (A: U) (a b: A) (p: Path A a b) :
+  Path (Path A a a) (composition A a b a p (<i> p @ -i)) (<_> a) =
+    <k j> comp (<_>A) (p @ j /\ -k)
+                    [ (j=0) -> <_> a,
+                      (j=1) -> <i> p @ -i /\ -k,
+                      (k=1) -> <_> a ]
+
+compInvPath (A: U) (a b: A) (p: Path A a b)
+  : Path (Path A b b) (composition A b a b (<i> p @ -i) p)  (<_> b)
+  = <j i> comp (<_>A) (p @ -i \/ j)
+                    [ (i=0) -> <_> b,
+                      (j=1) -> <_> b,
+                      (i=1) -> <k> p @ j \/ k ]
+
+compPathL (A:U) (a b:A) (p: Path A a b)
+  : Path (Path A a b) p (composition A a a b (<_>a) p)
+  = <j i> comp (<_>A) a
+                    [ (i=0) -> <_> a,
+                      (i=1) -> p,
+                      (j=0) -> <k>(p@i/\k) ]
+
+compPathR (A:U) (a b:A) (p: Path A a b)
+  : Path (Path A a b) p (composition A a b b p (<_>b))
+  = <j i> comp (<_>A) (p@i)
+                    [ (i=0) -> <_> a,
+                      (i=1) -> <_>b,
+                      (j=0) -> <_>(p@i) ]
+
+compPathQ (A:U) (a b c d:A) (f: Path A a b) (g: Path A b c) (h: Path A c d)
+        : Path (Path A a d) (composition A a c d (composition A a b c f g) h)
+                            (composition A a b d f (composition A b c d g h)) = undefined
+
+
+isConst (A: U) (f: A -> A): U = (x y: A) -> Path A (f x) (f y)
+
+exConst (A: U): U = (f: A -> A) * isConst A f
+
+mapOnPath (A B: U) (f: A -> B) (a b: A) (p: Path A a b): Path B (f a) (f b)
+    = <i> f (p @ i)
+
+substInv (A: U) (P: A -> U) (a b: A) (p: Path A a b): P b -> P a
+    = subst A P b a (<i> p @ -i)
+
+transRefl (A: U) (a: A): Path A (transport (<_> A) a) a
+    = <i> comp (<_> A) a [(i=1) -> <_>a]
+
+substPathP (A B: U) (p: Path U A B) (x: A) (y: B) (q: Path B (transport p x) y): PathP p x y
+    = transport (<i> PathP p x (q@i)) (<i> comp (<j> p @ (i /\ j)) x [(i=0) -> <_> x])
+
+JPM (A: U) (a b: A) (P: singl A a -> U) (u: P (eta A a)) (p: Path A a b): P (b,p)
+    = subst (singl A a) T (eta A a) (b,p) (contr A a b p) u where T (z : singl A a) : U = P z
+
+data N = Z  | S (n: N)
+
+n_grpd (A: U) (n: N): U = (a b: A) -> rec A a b n where
+   rec (A: U) (a b: A) : (k: N) -> U
+     = split | Z -> Path A a b | S n -> n_grpd (Path A a b) n
+
+isContr     (A: U): U = (x: A) * ((y: A) -> Path A x y)
+isProp      (A: U): U = n_grpd A Z
+isSet       (A: U): U = n_grpd A (S Z)
+isGroupoid  (A: U): U = n_grpd A (S (S Z))
+isGrp2      (A: U): U = n_grpd A (S (S (S Z)))
+isGrp3      (A: U): U = n_grpd A (S (S (S (S Z))))
+
+inf_grpd (A: U): U
+  = (carrier: A)
+  * (eq: (a b: A) -> Path A a b)
+  * ((a b: A) -> inf_grpd (Path A a b))
+
+isInfinityGroupoid (A: U): U = inf_grpd A
+
+PROP         : U = (X:U) * isProp X
+SET          : U = (X:U) * isSet X
+GROUPOID     : U = (X:U) * isGroupoid X
+INF_GROUPOID : U = (X:U) * isInfinityGroupoid X
+
+elemPathP (A B: U) (p: Path U A B) (a: A): (p': Path U A B) * (b: B) * PathP p' a b
+  = comp (<i> P (p @ i)) (refl U A, a, refl A a) [] where
+  P (X: U): U = (p: Path U A X) * (x: X) * PathP p a x
+
+isContrSingl (A:U) (a:A): isContr (singl A a)
+  = ((a,refl A a),\ (z:singl A a) -> contr A a z.1 z.2)
+
+singl' (A: U) (a: A): U = (x:A) * Path A x a
+contr' (A: U) (a b: A) (p: Path A a b): Path (singl' A b) (b,refl A b) (a,p) = <i> (p @ -i,<j> p @ -i\/j)
+isContrSingl' (A:U) (a:A): isContr (singl' A a)
+  = ((a,refl A a),\ (z:singl' A a) -> contr' A z.1 a z.2)
+
+isContrPath (A: U): isContr ((B: U) * Path U A B) = (ctr,ctrpath) where
+  ctr: (B: U) * Path U A B = (A,<_> A) where
+  ctrpath (q: (B: U) * Path U A B): Path ((B: U) * Path U A B) ctr q = <i> (q.2 @ i,<j> q.2 @ i/\j)
+
+isPathContr (A: U) (cA: isContr A) (x y:A) : isContr (Path A x y) = (p0,q) where
+  a: A = cA.1 where
+  f: (x:A) -> Path A a x = cA.2 where
+  p0: Path A x y = <i>comp (<j>A) a [(i=0) -> f x,(i=1) -> f y] where
+  q (p:Path A x y): Path (Path A x y) p0 p = <j i>comp (<k>A) a [(i=0) -> f x,
+                          (i=1) -> f y,
+                          (j=1) -> f (p@i),
+                          (j=0) -> <k>comp (<l>A) a [(k=0) -> <l>a,
+                                                     (i=0) -> <l>f x@k/\l,
+                                                     (i=1) -> <l>f y@k/\l] ]
+
+lemFib1 (A:U) (F G : A -> U) (a:A) (fa : F a -> G a)
+      : (x:A) (p : Path A a x) -> (fx : F x -> G x) ->
+        Path U (Path (F a -> G x) (\ (u:F a) -> subst A G a x p (fa u)) (\ (u:F a) -> fx (subst A F a x p u)))
+               (PathP (<i>F (p@i) -> G (p@i)) fa fx)
+      = J A a (\ (x:A) (p : Path A a x) -> (fx : F x -> G x) ->
+        Path U (Path (F a -> G x) (\ (u:F a) -> subst A G a x p (fa u)) (\ (u:F a) -> fx (subst A F a x p u)))
+               (PathP (<i>F (p@i) -> G (p@i)) fa fx)) r where
+      r (ga: F a -> G a)
+            : Path U (Path (F a -> G a) (\ (u:F a) -> transC (G a) (fa u)) (\ (u:F a) -> ga (transC (F a) u)))
+                     (Path (F a -> G a) fa ga)
+        = <j>Path (F a -> G a) (\ (u:F a) -> lemTransC (G a) (fa u)@j) (\ (u : F a) -> ga (lemTransC (F a) u@j))
+
+lemFib2 (A:U) (F:A->U) (a b:A) (p:Path A a b) (u:F a)
+      : (c:A) (q:Path A b c) -> Path (F c) (subst A F b c q (subst A F a b p u)) (subst A F a c (composition A a b c p q) u)
+      = J A b (\ (c:A) (q:Path A b c) -> Path (F c) (subst A F b c q (subst A F a b p u)) (subst A F a c (composition A a b c p q) u)) r where
+      x : Path (F b) (subst A F a b p u) (subst A F b b (<_>b) (subst A F a b p u)) =  <i>lemTransC (F b) (subst A F a b p u) @ -i where
+      y : Path (F b) (subst A F a b p u) (subst A F a b (composition A a b b p (<_>b)) u) = <i>subst A F a b (compPathR A a b p @ i) u where
+      r : Path (F b) (subst A F b b (<_>b) (subst A F a b p u)) (subst A F a b (composition A a b b p (<_>b)) u)
+        = comp (<i>Path (F b) (x@i) (y@i)) (<_>subst A F a b p u) []
+
+corFib1 (A: U) (F G: A -> U) (a: A) (fa ga: F a -> G a) (p: Path A a a)
+        (h: (u: F a) -> Path (G a) (subst A G a a p (fa u)) (ga (subst A F a a p u)))
+      : PathP (<i>F (p@i) -> G (p@i)) fa ga
+      = comp (lemFib1 A F G a fa a p ga) (<i>\ (u:F a) -> h u @ i) []
+
+lem1 (B:U) (F: B -> U) (y: B) (x: F y)
+       : PathP (<i>U) (PathP (<i>F ((refl B y)@i)) x x)
+                (Path (F y) (transport (<i>F((refl B y)@i)) x) x)
+       = <j> PathP (<i>F ((refl B y)@j\/i))
+                   (comp (<i>F ((refl B y)@j/\i)) x [(j=0)-><_>x]) x

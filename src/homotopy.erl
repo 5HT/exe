@@ -11,7 +11,7 @@ start(_,_) -> console:unicode(), supervisor:start_link({local,?MODULE},?MODULE,[
 stop(_)    -> ok.
 
 errcode({error,_}) -> 1;
-errcode(_)         -> 0.
+errcode({ok,_})    -> 0.
 
 console(S) ->
   lists:foldr(fun(I,Errors) -> R = lists:reverse(I),

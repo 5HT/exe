@@ -15,29 +15,29 @@ Angle   = \<|\>
 Parens  = \(|\)
 Square  = \[|\]
 Lambda  = \\|\λ
-Dot     = \.
 Minus   = \-
 Comma   = \,
 Colon   = \:
 Et      = \@
 Eq      = \=
+Dot     = \.
 Pipe    = \|
 Star    = \*
 Slash   = \\
 
 Rules.
 
-(data|record|\.1|\.2|split|comp|glue|fill|Glue|unglue|let|in|module|import|where|spawn|send|receive)
+(data|\.1|\.2|split|comp|glue|fill|Glue|unglue|let|in|module|import|where|spawn|send|receive)
   : {token,{list_to_atom(TokenChars),TokenLine}}.
 
 ({Curly}|{Parens}|{Angle}|{Square}|{Dot}|{Comma}|{Eq}|{Colon}|{Pipe}|{Star}|{Et}|{Minus})
   : {token,{list_to_atom(TokenChars),TokenLine}}.
 
-{A}+     : {token, {id, TokenLine, TokenChars}}.
 {Arrow}  : {token, {arrow, TokenLine}}.
 {Join}   : {token, {join, TokenLine}}.
 {Meet}   : {token, {meet, TokenLine}}.
 {Lambda} : {token, {lam, TokenLine}}.
+{A}+     : {token, {id, TokenLine, TokenChars}}.
 {B}+     : {token, {skip, TokenLine}}.
 {S}+     : skip_token.
 

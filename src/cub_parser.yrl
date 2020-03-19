@@ -19,9 +19,10 @@ sides -> '$empty' : [].
 sides -> side : '$1'.
 sides -> side ',' sides : ['$1'|'$3'].
 side -> '(' id '=' id ')' arrow exp : {side,'$2','$4','$7'}.
-formula -> formula forall f1 : {join,'$1','$3'}.
+formula -> formula join f1 : {join,'$1','$3'}.
 formula -> f1 : '$1'.
 formula -> f2 : '$1'.
+formula -> '(' formula ')' : '$2'.
 f1 -> f1 meet f2 : {meet,'$1','$3'}.
 f1 -> f2 : '$1'.
 f2 -> '-' f2 : {neg,'$2'}.
@@ -74,7 +75,7 @@ Left 10 def.
 Nonterminals mod imp tele exp app dec def ids sum cotele rsum
              br brs cobrs codec formula f1 f2 side sides sys papp.
 
-Terminals id digits atom oper skip lam meet arrow forall
+Terminals id digits atom oper skip lam meet join arrow
           '(' ')' '[' ']' '<' '>' '{' '}' '.' ','
           ':' '=' '#' '|' '-' '*' '/' '@' '0' '1'
           'module' 'where' 'import' 'record' 'data' 'split'

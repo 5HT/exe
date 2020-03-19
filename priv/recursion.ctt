@@ -6,13 +6,13 @@ data fix    (F:U -> U) = Fix (point: F (fix F))
 out_        (F:U -> U) : fix F -> F (fix F) = split | Fix f -> f
 in_         (F:U -> U) : F (fix F) -> fix F = \(x: F (fix F)) -> Fix x
 
-data mu     (F:U ->U) (A B:U) = Return (a: A) | Bind (f: F B)
-data nu     (F:U ->U) (A B:U) = CoBind (a: A)        (f: F B)
+data mu     (F:U -> U) (A B:U) = Return (a: A) | Bind (f: F B)
+data nu     (F:U -> U) (A B:U) = CoBind (a: A)        (f: F B)
 
-data free   (F:U ->U) (A:U)   = Free    (_: fix (mu F A))
-data cofree (F:U ->U) (A:U)   = CoFree  (_: fix (nu F A))
-unfree      (F:U ->U) (A:U):  free   F A -> fix (mu F A) = split | Free   a -> a
-uncofree    (F:U ->U) (A:U):  cofree F A -> fix (nu F A) = split | CoFree a -> a
+data free   (F:U -> U) (A:U)   = Free    (_: fix (mu F A))
+data cofree (F:U -> U) (A:U)   = CoFree  (_: fix (nu F A))
+unfree      (F:U -> U) (A:U):  free   F A -> fix (mu F A) = split | Free   a -> a
+uncofree    (F:U -> U) (A:U):  cofree F A -> fix (nu F A) = split | CoFree a -> a
 
 cata (A: U) (F: functor) (alg: F.1 A -> A) (f: fix F.1): A
    = alg (F.2 (fix F.1) A (cata A F alg) (out_ F.1 f))

@@ -1,7 +1,7 @@
 # HTS: Homotopy Type System for Erlang
 
-[![Build Status](https://travis-ci.com/groupoid/hts.svg?branch=master)](https://travis-ci.com/groupoid/hts)
-[![Hex pm](http://img.shields.io/hexpm/v/hts.svg?style=flat)](https://hex.pm/packages/hts)
+[![Build Status](https://travis-ci.com/groupoid/homotopy.svg?branch=master)](https://travis-ci.com/groupoid/homotopy)
+[![Hex pm](http://img.shields.io/hexpm/v/homotopy.svg?style=flat)](https://hex.pm/packages/homotopy)
 
 ```
 $ ./homotopy

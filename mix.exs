@@ -3,7 +3,7 @@ defmodule HTS.Mixfile do
   def deps, do: [ {:ex_doc, "~> 0.11", only: :dev} ]
   def application, do: [mod: {:homotopy, []}, applications: []]
   def project do
-    [ app: :hts,
+    [ app: :homotopy,
       version: "1.3.1",
       description: "HTS CTT-CCHM Homotopy Type System",
       package: package(),
@@ -12,6 +12,6 @@ defmodule HTS.Mixfile do
   def package do
     [ files: ~w(doc priv src mix.exs rebar.config LICENSE),
       licenses: ["ISC"],
-      links: %{"GitHub" => "https://github.com/groupoid/hts"}]
+      links: %{"GitHub" => "https://github.com/groupoid/homotopy"}]
   end
 end

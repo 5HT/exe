@@ -17,7 +17,7 @@ install:
   - ./mad compile release homotopy
 
 script:
-  - ./homotopy parse lex file priv/mltt.ctt
-  - ./homotopy parse lex file priv/path.ctt
-  - ./homotopy parse lex file priv/trunc.ctt
-  - ./homotopy parse lex file priv/recursion.ctt
+  - ./homotopy parse lex file core/mltt.ctt
+  - ./homotopy parse lex file core/path.ctt
+  - ./homotopy parse lex file core/trunc.ctt
+  - ./homotopy parse lex file core/recursion.ctt

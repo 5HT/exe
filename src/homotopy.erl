@@ -12,7 +12,7 @@ version()   -> proplists:get_value(vsn,module_info(attributes)).
 unicode()   -> io:setopts(standard_io, [{encoding, unicode}]).
 init([])    -> {ok, {{one_for_one, 5, 10}, []}}.
 start()     -> start(normal,[]).
-start(_,_)  -> unicode(), supervisor:start_link({local,cub},cub,[]).
+start(_,_)  -> unicode(), supervisor:start_link({local,?MODULE},?MODULE,[]).
 stop(_)     -> ok.
 
 console(S) ->

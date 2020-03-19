@@ -1,5 +1,6 @@
--module(cub).
--description('Exe Compiler').
+-module(homotopy).
+-description('Homotopy Type System').
+-vsn("1.3.1").
 -behaviour(supervisor).
 -behaviour(application).
 -export([init/1, start/2, stop/1]).
@@ -13,9 +14,10 @@ stop(_)      -> ok.
 init([])     -> {ok, {{one_for_one, 5, 10}, []}}.
 return(true) -> 1;
 return(false)-> 0.
+version()    -> proplists:get_value(vsn,module_info(attributes)).
 
 help() ->
-  io:format("HTS CTT-CCHM Homotopy Type System version ~s~n",["1.3.0"]),
+  io:format("HTS CTT-CCHM Homotopy Type System version ~s~n",[version()]),
   io:format("~n"),
   io:format(" usage = cub list ~n"),
   io:format("  list = [] | cmd [opt] list ~n"),

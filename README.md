@@ -4,7 +4,7 @@
 [![Hex pm](http://img.shields.io/hexpm/v/hts.svg?style=flat)](https://hex.pm/packages/hts)
 
 ```
-$ ./cub
+$ ./homotopy
 HTS CTT-CCHM Homotopy Type System version 1.3.0
 
  usage = cub list
@@ -24,8 +24,8 @@ $ chmod +x mad
 $ sudo cp mad /usr/local/bin
 ```
 ```sh
-$ mad dep com pla release cub
-$ ./cub parse file priv/mltt.ctt
+$ mad dep com pla release homotopy
+$ ./homotopy parse file priv/mltt.ctt
 ```
 
 # Elixir

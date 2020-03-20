@@ -7,11 +7,9 @@
 $ ./homotopy
 CTT-CCHM Homotopy Type System 1.3.1
 
- usage = homotopy args
-  args = [] | cmd | cmd args
-   cmd = parse <tokens> | lex <string> | read <name>
-       | fst <tuple> | snd <tuple>
-       | a <name> | file <name>
+   Usage := homotopy Args <filename>
+    Args := Command | Command Args
+ Command := parse | lex | read | fst | snd | file
 ```
 
 # Erlang

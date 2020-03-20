@@ -1,10 +1,13 @@
 -module(console).
 -description('Console Commands').
--export([fst/1, snd/1, read/1, lex/1, parse/1, file/1, a/1, unicode/0]).
+-export([fst/1, snd/1, read/1, lex/1, parse/1, file/1, a/1, unicode/0, errcode/1]).
 
-unicode()  -> io:setopts(standard_io, [{encoding, unicode}]).
-fst({X,_}) -> X.
-snd({_,X}) -> X.
+unicode()          -> io:setopts(standard_io, [{encoding, unicode}]).
+errcode({ok,_})    -> 0;
+errcode({error,_}) -> 1.
+
+fst({X,_}) -> {ok,X}.
+snd({_,X}) -> {ok,X}.
 file(F)    -> lex(read(F)).
 a(F)       -> parse(file(F)).
 

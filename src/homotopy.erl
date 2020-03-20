@@ -10,18 +10,13 @@ main(A)    -> console:unicode(), case A of [] -> halt(help()); A -> halt(console
 start(_,_) -> console:unicode(), supervisor:start_link({local,?MODULE},?MODULE,[]).
 stop(_)    -> ok.
 
-errcode({error,_}) -> 1;
-errcode({ok,_})    -> 0.
-
 console(S) ->
   lists:foldr(fun(I,Errors) -> R = lists:reverse(I),
     Res = lists:foldl(fun(X,A) -> console:(list_to_atom(lists:concat([X])))(A) end,hd(R),tl(R)),
-    io:format("~tp~n",[Res]),
-    Errors + errcode(Res) end, 0, string:tokens(S,[","])).
+    io:format("~tp~n",[element(2,Res)]), Errors + console:errcode(Res) end, 0, string:tokens(S,[","])).
 
 help() ->
   io:format("CTT-CCHM Homotopy Type System ~s~n~n",[proplists:get_value(vsn,module_info(attributes))]),
-  io:format(" usage = homotopy args ~n"),
-  io:format("  args = [] | cmd | cmd args ~n"),
-  io:format("   cmd = parse <tokens> | lex <string> | read <name> ~n"),
-  io:format("       | fst <tuple> | snd <tuple> | a <name> | file <name> ~n"), 0.
+  io:format("   Usage := homotopy Args <filename> ~n"),
+  io:format("    Args := Command | Command Args ~n"),
+  io:format(" Command := parse | lex | read | fst | snd | file ~n~n"), 0.
